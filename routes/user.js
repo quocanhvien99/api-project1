@@ -78,8 +78,8 @@ router.put('/change', authentication, async (req, res) => {
 });
 
 router.get('/info', authentication, async (req, res) => {
-	const { name, email } = await User.findById(req.user._id);
-	res.status(200).send({ name, email });
+	const { name, email, date } = await User.findById(req.user._id);
+	res.status(200).send({ name, email, date });
 })
 
 module.exports = router;
