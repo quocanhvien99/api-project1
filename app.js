@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 3000;
 const mongoose = require('mongoose');
@@ -9,7 +10,13 @@ const mongoose = require('mongoose');
 const userRoute = require('./routes/user');
 const importantRoute = require('./routes/importantData');
 
-const cors = require('./middlewares/cors');
+const corsOptions = {
+	origin: 'http://localhost:3000',
+	credentials: true,
+	methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+	preflightContinue: false,
+	optionsSuccessStatus: 204
+  }
 
 //Connect to DB
 mongoose.connect(
@@ -20,8 +27,8 @@ mongoose.connect(
 
 app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-app.use(cookieParser);
-app.use(cors);
+app.use(cookieParser());
+app.use(cors(corsOptions));
 
 //Route Middlewares
 app.use('/api/user', userRoute);
