@@ -11,12 +11,8 @@ const userRoute = require('./routes/user');
 const importantRoute = require('./routes/importantData');
 
 const corsOptions = {
-	origin: 'http://localhost:3000',
-	credentials: true,
-	methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-	allowedHeaders: 'Content-Type',
-	preflightContinue: true,
-	optionsSuccessStatus: 204
+	origin: 'https://frontend-project1-quocanh.herokuapp.com',
+	credentials: true
   }
 
 //Connect to DB

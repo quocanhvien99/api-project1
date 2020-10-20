@@ -54,10 +54,9 @@ router.post('/login', async (req, res) => {
 		expiresIn: '1h'
 	});
 	
-	res.cookies('auth-token', token, {
+	res.cookie('auth-token', token, {
 		maxAge: 300000
-	});
-	res.send(token);
+	}).send(token);
 });
 
 router.put('/change', authentication, async (req, res) => {
