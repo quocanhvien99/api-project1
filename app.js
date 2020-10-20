@@ -11,7 +11,7 @@ const userRoute = require('./routes/user');
 const importantRoute = require('./routes/importantData');
 
 const corsOptions = {
-	origin: '*',
+	origin: 'http://localhost:3000',
 	credentials: true,
 	methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
 	allowedHeaders: 'Content-Type',
