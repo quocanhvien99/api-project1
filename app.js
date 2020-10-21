@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 
 //Import Routes
 const userRoute = require('./routes/user');
+const reportRoute = require('./routes/report');
 const importantRoute = require('./routes/importantData');
 
 const corsOptions = {
@@ -29,6 +30,7 @@ app.use(cors(corsOptions));
 
 //Route Middlewares
 app.use('/api/user', userRoute);
+app.use('/api/report', reportRoute);
 app.use('/important', importantRoute);
 
 app.get('/', (req, res) => {
