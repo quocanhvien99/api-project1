@@ -56,8 +56,8 @@ router.post('/login', async (req, res) => {
 	
 	res.cookie('auth-token', token, {
 		maxAge: 3600000,
-		//sameSite: 'none',
-		//secure: true		//chạy ở local thì không cần
+		sameSite: 'none',
+		secure: true		//chạy ở local thì không cần
 	}).send(token);
 });
 
