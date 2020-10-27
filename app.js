@@ -12,7 +12,7 @@ const reportRoute = require('./routes/report');
 const importantRoute = require('./routes/importantData');
 
 const corsOptions = {
-	origin: 'https://frontend-project1-quocanh.herokuapp.com',
+	origin: process.env.FRONTEND_URL,
 	credentials: true
   }
 

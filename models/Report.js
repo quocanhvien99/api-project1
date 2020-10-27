@@ -17,6 +17,10 @@ const reportSchema = new mongoose.Schema({
 		type: String,
 		require: true
 	},
+	userId: {
+		type: String,
+		require: true
+	},
 	date: {
 		type: Date,
 		default: Date.now()

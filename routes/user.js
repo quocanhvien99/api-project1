@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const authentication = require('../authentication');
+const adminAuth = require('../adminAuth');
 
 const {
 	registerValidation,
@@ -56,8 +57,8 @@ router.post('/login', async (req, res) => {
 	
 	res.cookie('auth-token', token, {
 		maxAge: 3600000,
-		sameSite: 'none',
-		secure: true		//chạy ở local thì không cần
+		//sameSite: 'none',
+		//secure: true		//chạy ở local thì không cần
 	}).send(token);
 });
 
@@ -81,9 +82,35 @@ router.put('/change', authentication, async (req, res) => {
 	}
 });
 
+router.delete('/delete', authentication, adminAuth, (req, res) => {
+	const { _id } = req.body;
+	Report.findOneAndDelete({ _id })
+		.then(user => res.statusCode(200).json(user))
+		.catch(err => res.statusCode(404).json(err));
+});
+
 router.get('/info', authentication, async (req, res) => {
-	const { name, email, date } = await User.findById(req.user._id);
-	res.status(200).send({ name, email, date });
-})
+	const { name, email, date, isAdmin } = await User.findById(req.user._id);
+	res.status(200).send({ name, email, date, isAdmin });
+});
+
+router.get('/list', authentication, adminAuth, async (req, res) => {
+    let { page } = req.query;
+	page = parseInt(page);
+	const limit = 10;
+	const skip = limit * page; //page start with 0
+
+	let users = {}
+	let countDocs;
+
+	try {
+		users.data = await User.find(null, null, { skip, limit });
+		countDocs = await User.countDocuments();
+		users.countPages = Math.ceil(countDocs/limit);
+		res.status(200).send(users);
+	} catch (err) {
+		res.status(404).send(err);
+	}
+});
 
 module.exports = router;
