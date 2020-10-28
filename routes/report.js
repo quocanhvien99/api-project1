@@ -35,16 +35,26 @@ router.get('/', authentication, async (req, res) => {
 	try {        
         if (isAdmin) {
 			if ( by && keyword ) {
-				reports.data = await Report.find({ [by]: keyword }, null, { skip, limit });
-				countDocs = await Report.countDocuments({ [by]: keyword });
+				if (by == 'name') {
+					reports.data = await Report.find({ [by]: { $regex: keyword }  }, null, { skip, limit });
+					countDocs = await Report.countDocuments({ [by]: { $regex: keyword } });
+				} else {
+					reports.data = await Report.find({ [by]: keyword }, null, { skip, limit });
+					countDocs = await Report.countDocuments({ [by]: keyword });
+				}				
 			} else {
 				reports.data = await Report.find(null, null, { skip, limit });
 				countDocs = await Report.countDocuments();
 			}
         } else {
 			if ( by && keyword ) {
-				reports.data = await Report.find({userId: req.user._id, [by]: keyword }, null, { skip, limit });
-				countDocs = await Report.countDocuments({ userId: req.user._id, [by]: keyword });
+				if (by == 'name') {
+					reports.data = await Report.find({ userId: req.user._id, [by]: { $regex: keyword }  }, null, { skip, limit });
+					countDocs = await Report.countDocuments({ userId: req.user._id, [by]: { $regex: keyword } });
+				} else {
+					reports.data = await Report.find({ userId: req.user._id, [by]: keyword }, null, { skip, limit });
+					countDocs = await Report.countDocuments({ userId: req.user._id, [by]: keyword });
+				}				
 			} else {
 				reports.data = await Report.find({ userId: req.user._id }, null, { skip, limit });			
 				countDocs = await Report.countDocuments({ userId: req.user._id });	

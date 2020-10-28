@@ -84,7 +84,7 @@ router.put('/change', authentication, async (req, res) => {
 
 router.delete('/delete', authentication, adminAuth, (req, res) => {
 	const { _id } = req.body;
-	Report.findOneAndDelete({ _id })
+	User.findOneAndDelete({ _id })
 		.then(user => res.statusCode(200).json(user))
 		.catch(err => res.statusCode(404).json(err));
 });
