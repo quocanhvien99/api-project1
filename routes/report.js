@@ -22,9 +22,9 @@ router.post('/', authentication, async (req, res) => {
 
 router.get('/', authentication, async (req, res) => {
 	//Get all and search report list 
-	let { page, by, keyword } = req.query;
+	let { page, field, keyword, limit } = req.query;
 	page = parseInt(page);
-	const limit = 10;
+	limit = parseInt(limit);
     const skip = limit * page; //page start with 0
     
     const { isAdmin } = await User.findById(req.user._id);
@@ -34,59 +34,38 @@ router.get('/', authentication, async (req, res) => {
 	
 	try {        
         if (isAdmin) {
-			if ( by && keyword ) {
-				if (by == 'name') {
-					reports.data = await Report.find({ [by]: { $regex: keyword }  }, null, { skip, limit });
-					countDocs = await Report.countDocuments({ [by]: { $regex: keyword } });
+			if ( field && keyword ) {
+				if (field == 'name') {
+					reports.data = await Report.find({ name: { $regex: keyword }  }, null, { skip, limit });
+					countDocs = await Report.countDocuments({ name: { $regex: keyword } });
+				} else if (field == 'birthday') {
+					let birthday = new Date(keyword);
+					reports.data = await Report.find({ birthday: {$gte: keyword, $lt: new Date(birthday.getTime() + 86400000)} }, null, { skip, limit });
 				} else {
-					reports.data = await Report.find({ [by]: keyword }, null, { skip, limit });
-					countDocs = await Report.countDocuments({ [by]: keyword });
+					reports.data = await Report.find({ [field]: keyword }, null, { skip, limit });
+					countDocs = await Report.countDocuments({ [field]: keyword });
 				}				
 			} else {
 				reports.data = await Report.find(null, null, { skip, limit });
 				countDocs = await Report.countDocuments();
 			}
         } else {
-			if ( by && keyword ) {
-				if (by == 'name') {
-					reports.data = await Report.find({ userId: req.user._id, [by]: { $regex: keyword }  }, null, { skip, limit });
-					countDocs = await Report.countDocuments({ userId: req.user._id, [by]: { $regex: keyword } });
+			if ( field && keyword ) {
+				if (field == 'name') {
+					reports.data = await Report.find({ userId: req.user._id, name: { $regex: keyword }  }, null, { skip, limit });
+					countDocs = await Report.countDocuments({ userId: req.user._id, name: { $regex: keyword } });
+				} else if (field == 'birthday') {
+					let birthday = new Date(keyword);
+					reports.data = await Report.find({ userId: req.user._id, birthday: {$gte: keyword, $lt: new Date(birthday.getTime() + 86400000)} }, null, { skip, limit });
 				} else {
-					reports.data = await Report.find({ userId: req.user._id, [by]: keyword }, null, { skip, limit });
-					countDocs = await Report.countDocuments({ userId: req.user._id, [by]: keyword });
+					reports.data = await Report.find({ userId: req.user._id, [field]: keyword }, null, { skip, limit });
+					countDocs = await Report.countDocuments({ userId: req.user._id, [field]: keyword });
 				}				
 			} else {
 				reports.data = await Report.find({ userId: req.user._id }, null, { skip, limit });			
 				countDocs = await Report.countDocuments({ userId: req.user._id });	
 			}		
 		}		
-		reports.countPages = Math.ceil(countDocs/limit);
-		res.status(200).send(reports);
-	} catch (err) {
-		res.status(404).send(err);
-	}
-});
-
-router.get('/search', authentication, async (req, res) => {
-	//Tìm kiếm
-    let { page, prop, value } = req.query;
-	page = parseInt(page);
-	const limit = 10;
-    const skip = limit * page; //page start with 0
-    
-    const { isAdmin } = await User.findById(req.user._id);
-
-	let reports = {};
-	let countDocs;
-
-	try {        
-        if (isAdmin) {
-			reports.data = await Report.find({ [prop]: value }, null, { skip, limit });
-			countDocs = await Report.countDocuments();
-        } else {
-			reports.data = await Report.find({userId: req.user._id, [prop]: value }, null, { skip, limit });
-			countDocs = await Report.countDocuments({userId: req.user._id, [prop]: value });
-        }		
 		reports.countPages = Math.ceil(countDocs/limit);
 		res.status(200).send(reports);
 	} catch (err) {

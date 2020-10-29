@@ -57,8 +57,8 @@ router.post('/login', async (req, res) => {
 	
 	res.cookie('auth-token', token, {
 		maxAge: 3600000,
-		//sameSite: 'none',
-		//secure: true		//chạy ở local thì không cần
+		sameSite: 'none',	//chạy ở cùng ip thì không cần
+		secure: true		//chạy ở cùng ip thì không cần
 	}).send(token);
 });
 
@@ -95,9 +95,9 @@ router.get('/info', authentication, async (req, res) => {
 });
 
 router.get('/list', authentication, adminAuth, async (req, res) => {
-    let { page } = req.query;
+    let { page, limit } = req.query;
 	page = parseInt(page);
-	const limit = 10;
+	limit = parseInt(limit);
 	const skip = limit * page; //page start with 0
 
 	let users = {}
