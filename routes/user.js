@@ -62,6 +62,14 @@ router.post('/login', async (req, res) => {
 	}).send(token);
 });
 
+router.get('/logout', (req, res) => {
+	res.cookie('auth-token', '', {
+		maxAge: 0,
+		sameSite: 'none',	//chạy ở cùng ip thì không cần
+		secure: true		//chạy ở cùng ip thì không cần
+	}).send(token);
+});
+
 router.put('/change', authentication, async (req, res) => {
 	//Validate data
 	const { error } = passwordValidation(req.body);
