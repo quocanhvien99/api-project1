@@ -57,8 +57,8 @@ router.post('/login', async (req, res) => {
 	
 	res.cookie('auth-token', token, {
 		maxAge: 3600000,
-		//sameSite: 'none',	//chạy ở cùng ip thì không cần
-		//secure: true		//chạy ở cùng ip thì không cần
+		sameSite: 'none',	//chạy ở cùng ip thì không cần
+		secure: true		//chạy ở cùng ip thì không cần
 	}).send(token);
 });
 
