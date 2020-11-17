@@ -78,5 +78,33 @@ router.delete('/', (req, res) => {
     Report.findOneAndDelete({ _id })
 		.then(item => res.status(200).json(item))
 		.catch(err => res.status(404).json(err));
-})
+});
+
+router.get('/statistic/:year', async (req, res) => {
+	// const { isAdmin } = await User.findById(req.user._id);
+	// let statistic;
+	// if (isAdmin) {
+		
+	// } else {
+
+	// }
+	Report.aggregate(
+		[
+			{
+				$group: {
+					_id: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+					total: { $sum: 1 }
+
+				}
+			}
+	  	],
+  
+	  	function(err, result) {
+			if (err) {
+			res.send(err);
+			} else {
+			res.json(result);
+			}
+	  	})
+});
 module.exports = router;
