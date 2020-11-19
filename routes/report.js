@@ -80,30 +80,61 @@ router.delete('/', (req, res) => {
 		.catch(err => res.status(404).json(err));
 });
 
-router.get('/statistic/:year', async (req, res) => {
-	// const { isAdmin } = await User.findById(req.user._id);
-	// let statistic;
-	// if (isAdmin) {
-		
-	// } else {
+router.get('/statistic',authentication, async (req, res) => {
+	const { isAdmin } = await User.findById(req.user._id);
 
-	// }
 	Report.aggregate(
 		[
 			{
+				$match: isAdmin?{}:{ userId: req.user._id }
+			},
+			{
+				$project: {
+					year: { $year: "$date" },
+					month: { $month: "$date" }
+				}
+			},
+			{
 				$group: {
-					_id: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+					_id: {
+						month: "$month",
+                		year: "$year"
+					},
 					total: { $sum: 1 }
-
+				}
+			},
+			{
+				$project: {
+					_id: 0,
+					month: "$_id.month",
+					year: "$_id.year",
+					total: "$total"
 				}
 			}
-	  	],
-  
+	  	],  
 	  	function(err, result) {
 			if (err) {
 			res.send(err);
 			} else {
-			res.json(result);
+				let data = {};
+				result.map((item) => {
+					data[item.year] = {};
+				});
+				result.map((item) => {
+					data[item.year][item.month] = item.total;
+				});
+				for (let key in data) {
+					let tempArr = [];
+					for (let i = 1; i <= 12; i++) {
+						if (data[key][i]) {
+							tempArr.push(data[key][i]);
+						} else {
+							tempArr.push(0);
+						}
+					}
+					data[key] = tempArr;
+				}
+				res.json(data);
 			}
 	  	})
 });
