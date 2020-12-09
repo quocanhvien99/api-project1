@@ -5,15 +5,16 @@ const userSchema = new mongoose.Schema({
 		type: String,
 		require: true
 	},
+	fbid: {
+		type: String
+	},
 	email: {
-		type: String,
-		require: true
+		type: String
 	},
 	password: {
 		type: String,
-		require: true,
 		max: 255,
-		min: 8
+		min: 7
 	},
 	isAdmin: {
 		type: Boolean,

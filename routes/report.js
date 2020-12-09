@@ -9,7 +9,7 @@ router.post('/', authentication, async (req, res) => {
 		name: req.body.name,
 		sex: req.body.sex,
 		birthday: req.body.birthday,
-		userId: req.user._id,
+		userId: req.user.id,
         content: 'something'
 	});
 	try {
@@ -27,7 +27,7 @@ router.get('/', authentication, async (req, res) => {
 	limit = parseInt(limit);
     const skip = limit * page; //page start with 0
     
-    const { isAdmin } = await User.findById(req.user._id);
+    const { isAdmin } = await User.findById(req.user.id);
 
 	let reports = {};
 	let countDocs;
@@ -52,18 +52,18 @@ router.get('/', authentication, async (req, res) => {
         } else {
 			if ( field && keyword ) {
 				if (field == 'name') {
-					reports.data = await Report.find({ userId: req.user._id, name: { $regex: keyword }  }, null, { skip, limit });
-					countDocs = await Report.countDocuments({ userId: req.user._id, name: { $regex: keyword } });
+					reports.data = await Report.find({ userId: req.user.id, name: { $regex: keyword }  }, null, { skip, limit });
+					countDocs = await Report.countDocuments({ userId: req.user.id, name: { $regex: keyword } });
 				} else if (field == 'birthday') {
 					let birthday = new Date(keyword);
-					reports.data = await Report.find({ userId: req.user._id, birthday: {$gte: keyword, $lt: new Date(birthday.getTime() + 86400000)} }, null, { skip, limit });
+					reports.data = await Report.find({ userId: req.user.id, birthday: {$gte: keyword, $lt: new Date(birthday.getTime() + 86400000)} }, null, { skip, limit });
 				} else {
-					reports.data = await Report.find({ userId: req.user._id, [field]: keyword }, null, { skip, limit });
-					countDocs = await Report.countDocuments({ userId: req.user._id, [field]: keyword });
+					reports.data = await Report.find({ userId: req.user.id, [field]: keyword }, null, { skip, limit });
+					countDocs = await Report.countDocuments({ userId: req.user.id, [field]: keyword });
 				}				
 			} else {
-				reports.data = await Report.find({ userId: req.user._id }, null, { skip, limit });			
-				countDocs = await Report.countDocuments({ userId: req.user._id });	
+				reports.data = await Report.find({ userId: req.user.id }, null, { skip, limit });			
+				countDocs = await Report.countDocuments({ userId: req.user.id });	
 			}		
 		}		
 		reports.countPages = Math.ceil(countDocs/limit);
@@ -81,12 +81,12 @@ router.delete('/', (req, res) => {
 });
 
 router.get('/statistic',authentication, async (req, res) => {
-	const { isAdmin } = await User.findById(req.user._id);
+	const { isAdmin } = await User.findById(req.user.id);
 
 	Report.aggregate(
 		[
 			{
-				$match: isAdmin?{}:{ userId: req.user._id }
+				$match: isAdmin?{}:{ userId: req.user.id }
 			},
 			{
 				$project: {

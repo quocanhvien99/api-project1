@@ -7,7 +7,6 @@ const adminAuth = require('../adminAuth');
 
 const {
 	registerValidation,
-	loginValidation,
 	passwordValidation
 } = require('../validation');
 
@@ -37,38 +36,6 @@ router.post('/register', async (req, res) => {
 	}
 });
 
-router.post('/login', async (req, res) => {
-	//Validate data
-	const { error } = loginValidation(req.body);
-	if (error) return res.status(400).send(error.details[0].message);
-
-	//Checking if the email exists
-	const user = await User.findOne({ email: req.body.email });
-	if (!user) return res.status(404).send('Email or password is wrong');
-
-	//Compare password
-	const validPass = await bcrypt.compare(req.body.password, user.password);
-	if (!validPass) return res.status(400).send('Email or password is wrong');
-
-	//Create and assign a token
-	const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET, {
-		expiresIn: '1h'
-	});
-	
-	res.cookie('auth-token', token, {
-		maxAge: 3600000,
-		sameSite: 'none',	//chạy ở cùng ip thì không cần
-		secure: true		//chạy ở cùng ip thì không cần
-	}).send(token);
-});
-
-router.get('/logout', (req, res) => {
-	res.clearCookie('auth-token', {
-		sameSite: 'none',	//chạy ở cùng ip thì không cần
-		secure: true		//chạy ở cùng ip thì không cần
-	}).send('logout');
-});
-
 router.put('/change', authentication, async (req, res) => {
 	//Validate data
 	const { error } = passwordValidation(req.body);
@@ -80,7 +47,7 @@ router.put('/change', authentication, async (req, res) => {
 	//Find user and change password
 	try {
 		const user = await User.findOneAndUpdate(
-			{ _id: req.user._id },
+			{ _id: req.user.id },
 			{ password: hashedPassword }
 		);
 		res.status(200).send(user);
@@ -97,7 +64,7 @@ router.delete('/delete', authentication, adminAuth, (req, res) => {
 });
 
 router.get('/info', authentication, async (req, res) => {
-	const { name, email, date, isAdmin } = await User.findById(req.user._id);
+	const { name, email, date, isAdmin } = await User.findById(req.user.id);
 	res.status(200).send({ name, email, date, isAdmin });
 });
 

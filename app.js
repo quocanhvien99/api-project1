@@ -5,11 +5,26 @@ const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 3000;
 const mongoose = require('mongoose');
+const passport = require("passport");
+const passportSetup = require('./passport-setup');
+const cookieSession = require('cookie-session');
+
+app.use(cookieSession({
+	name: 'session',
+	maxAge: 3600000,
+	//sameSite: 'none',	//chạy ở cùng ip thì không cần
+	//secure: true,
+	keys: [process.env.TOKEN_SECRET]
+}))
+//initalize passport
+app.use(passport.initialize());
+app.use(passport.session());
 
 //Import Routes
 const userRoute = require('./routes/user');
 const reportRoute = require('./routes/report');
 const importantRoute = require('./routes/importantData');
+const authRoute = require('./routes/auth');
 
 const corsOptions = {
 	origin: process.env.FRONTEND_URL,
@@ -25,13 +40,14 @@ mongoose.connect(
 
 app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-app.use(cookieParser());
+//app.use(cookieParser());
 app.use(cors(corsOptions));
 
 //Route Middlewares
 app.use('/api/user', userRoute);
 app.use('/api/report', reportRoute);
 app.use('/important', importantRoute);
+app.use('/api/auth', authRoute);
 
 app.get('/', (req, res) => {
 	res.status(200).send('API Server');
