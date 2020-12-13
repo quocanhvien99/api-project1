@@ -9,6 +9,8 @@ const passport = require("passport");
 const passportSetup = require('./passport-setup');
 const cookieSession = require('cookie-session');
 
+app.use(express.static('public'));
+
 app.use(cookieSession({
 	name: 'session',
 	maxAge: 3600000,
@@ -49,8 +51,8 @@ app.use('/api/report', reportRoute);
 app.use('/important', importantRoute);
 app.use('/api/auth', authRoute);
 
-app.get('/', (req, res) => {
-	res.status(200).send('API Server');
-})
+// app.get('/', (req, res) => {
+// 	res.status(200).send('API Server');
+// })
 
 app.listen(port, () => console.log('Server is running!'));
