@@ -5,7 +5,8 @@ const CLIENT_HOME_PAGE_URL = "http://localhost:3000";
 // When logout, redirect to client
 router.get("/logout", (req, res) => {
   req.logout();
-  res.redirect(CLIENT_HOME_PAGE_URL);
+  //res.redirect(CLIENT_HOME_PAGE_URL);
+  res.redirect(process.env.FRONTEND_URL);
 });
 
 // auth with google
