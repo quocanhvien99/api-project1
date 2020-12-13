@@ -16,14 +16,14 @@ router.get("/google", passport.authenticate("google", {
 // redirect to home page after successfully login via google
 router.get("/google/redirect",
   passport.authenticate("google", {
-    successRedirect: 'http://localhost:3001'
+    successRedirect: process.env.FRONTEND_URL
 }));
 
 router.get("/facebook", passport.authenticate("facebook"));
 
 router.get("/facebook/redirect",
   passport.authenticate("facebook", {
-    successRedirect: 'http://localhost:3001'
+    successRedirect: process.env.FRONTEND_URL
 }));
 
 router.post('/login', 
