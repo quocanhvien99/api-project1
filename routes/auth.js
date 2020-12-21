@@ -29,7 +29,8 @@ router.get("/facebook/redirect",
 
 router.post('/login', 
   passport.authenticate('local', {
-    successRedirect: CLIENT_HOME_PAGE_URL
+    //successRedirect: CLIENT_HOME_PAGE_URL
+    successRedirect: process.env.FRONTEND_URL
 }));
 
 module.exports = router;

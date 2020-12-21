@@ -25,6 +25,7 @@ app.use(passport.session());
 //Import Routes
 const userRoute = require('./routes/user');
 const reportRoute = require('./routes/report');
+const contentRoute = require('./routes/content');
 const importantRoute = require('./routes/importantData');
 const authRoute = require('./routes/auth');
 
@@ -48,6 +49,7 @@ app.use(cors(corsOptions));
 //Route Middlewares
 app.use('/api/user', userRoute);
 app.use('/api/report', reportRoute);
+app.use('/api/content', contentRoute);
 app.use('/important', importantRoute);
 app.use('/api/auth', authRoute);
 

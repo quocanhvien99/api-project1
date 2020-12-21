@@ -3,7 +3,6 @@ const User = require("./models/User");
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
 const LocalStrategy = require('passport-local');
-const shortid = require('shortid');
 const bcrypt = require('bcrypt');
 
 passport.serializeUser((user, done) => {

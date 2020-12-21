@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const authentication = require('../authentication');
 const adminAuth = require('../adminAuth');
@@ -59,8 +58,8 @@ router.put('/change', authentication, async (req, res) => {
 router.delete('/delete', authentication, adminAuth, (req, res) => {
 	const { _id } = req.body;
 	User.findOneAndDelete({ _id })
-		.then(user => res.statusCode(200).json(user))
-		.catch(err => res.statusCode(404).json(err));
+		.then(user => res.status(200).json(user))
+		.catch(err => res.status(404).json(err));
 });
 
 router.get('/info', authentication, async (req, res) => {
