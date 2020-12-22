@@ -857,7 +857,7 @@ bạn; bạn có thể thấy những gì bạn có thể và làm như thế n�
         }
     });
 
-    pdf.create(`
+    html_to_pdf.generatePdf({ content:`
         <html>
             <body style="margin: 0;">
                 <div id="bia" style="position: relative; padding: 0;">
@@ -866,13 +866,20 @@ bạn; bạn có thể thấy những gì bạn có thể và làm như thế n�
                 </div>
             </body>
         </html>
-        `, ).toBuffer(async (err, buffer) => {
+        `}, { format: 'A4'}).then(async buffer => {
             pdfcover = buffer;
             if (pdfmain && pdfcover) {
                 const merged = await merge([pdfcover, pdfmain]);
                 res.end(merged, 'binary');
             }
         });
+        // .toBuffer(async (err, buffer) => {
+        //     pdfcover = buffer;
+        //     if (pdfmain && pdfcover) {
+        //         const merged = await merge([pdfcover, pdfmain]);
+        //         res.end(merged, 'binary');
+        //     }
+        // });
       
 });
 module.exports = router;
