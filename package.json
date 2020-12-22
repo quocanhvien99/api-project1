@@ -18,13 +18,16 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "html-pdf": "^2.2.0",
+    "html-pdf-node": "^1.0.7",
     "joi": "^17.2.1",
     "jsonwebtoken": "^8.5.1",
+    "merge-pdf-buffers": "^1.0.3",
     "mongoose": "^5.10.9",
     "passport": "^0.4.1",
     "passport-facebook": "^3.0.0",
     "passport-google-oauth": "^2.0.0",
     "passport-local": "^1.0.0",
+    "pdf-merge": "^1.2.0",
     "shortid": "^2.2.16"
   },
   "devDependencies": {

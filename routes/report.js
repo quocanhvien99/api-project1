@@ -1,9 +1,11 @@
 const router = require('express').Router();
 var pdf = require('html-pdf');
+const { merge } = require('merge-pdf-buffers');
 const authentication = require('../authentication');
 const Report = require('../models/Report');
 const User = require('../models/User');
 const Content = require('../models/Content');
+var html_to_pdf = require('html-pdf-node');
 
 router.post('/', authentication, async (req, res) => {
     let temp = await Promise.all([
@@ -185,14 +187,31 @@ router.get('/statistic',authentication, async (req, res) => {
 
 router.get('/:id', async (req, res) => {
     const reportId = req.params.id;
-    const data = await Report.findById(reportId);
+    const data = await Report.findById(reportId);    
+    const formatDate = (birthday) => {
+        birthday = new Date(birthday);
+        const d = birthday.getDate();
+        const m = birthday.getMonth() + 1;
+        const y = birthday.getFullYear();
+        return d + '/' + m + '/' + y
+    }
     const content = data.content;
-    console.log(content);
+    const name = data.name;
+    const sex = data.sex;
+    const birthday = formatDate(data.birthday);
+
+    let pdfmain, pdfcover;
 
 	const options = {
-		format: 'A4'
-	};	
-
+        format: 'A4',
+        border: {
+            "top": "0.8in",            // default is 0, units: mm, cm, in, px
+            "right": "0.8in",
+            "bottom": "0.8in",
+            "left": "0.8in"
+        }
+    };
+    
 	pdf.create(`
     <html>
     <head>
@@ -204,7 +223,6 @@ router.get('/:id', async (req, res) => {
             body > div {
                 box-sizing: border-box;              
                 page-break-after: always;
-                padding: 0 0.5in;
             }
             .number {
                 font-size: xx-large;
@@ -227,13 +245,8 @@ router.get('/:id', async (req, res) => {
             }
         </style>
     </head>
-    <body>        
-            <head></head>
+    <body>
             <body>
-                <div id="bia" style="position: relative; padding: 0;">
-                    <img style="width:8.27in;height:11.69in;" src="file:///F:/Web%20Dev/pdf/OutDocument/ri_1.png">
-                    <div style="position: absolute; bottom: 1.3in; width: 100%;text-align: center;"><span style="font-size:24pt;color:#fff">ĐỖ QUỐC HUY 30/06/1983</span></div>
-                </div>
                 <div id="mucluc">
                     <h1 style="text-transform: uppercase; text-align: center;">Mục lục báo cáo</h1>
                     <p>• Thông tin khách hàng</p>
@@ -264,10 +277,10 @@ router.get('/:id', async (req, res) => {
                 </div>
                 <div>
                     <h2>Thông tin khách hàng</h2>
-                    <div style="font-size: larger; border: 2px dashed #0070C0; border-radius: 30px; width: fit-content; padding: 10px 150px 10px 20px; background-color: #E7E6E6; margin-top: 30px;">
-                        <p>Họ và tên: <span style="text-transform: uppercase; font-weight: bold;">đỗ quốc huy</span></p>
-                        <p>Sinh nhật: <span style="font-weight: bold;">30/06/1983</span></p>
-                        <p>Họ và tên: <span style="text-transform: capitalize; font-weight: bold;">Nam</span></p>
+                    <div style="font-size: larger; border: 2px dashed #0070C0; border-radius: 30px; display: inline-block; padding: 10px 150px 10px 20px; background-color: #E7E6E6; margin-top: 30px;">
+                        <p>Họ và tên: <span style="text-transform: uppercase; font-weight: bold;">${name}</span></p>
+                        <p>Sinh nhật: <span style="font-weight: bold;">${birthday}</span></p>
+                        <p>Họ và tên: <span style="text-transform: capitalize; font-weight: bold;">${sex}</span></p>
                     </div>
                     <div>
                         <h2 style="text-align: center;">Giới thiệu</h2>
@@ -469,13 +482,397 @@ bạn; bạn có thể thấy những gì bạn có thể và làm như thế n�
                 <div class="number">${content[5].number}</div>
                 ${content[5].content}
                 </div>
+                <div>
+                    <h2 style="text-align: center;">4 THÁCH THỨC</h2>
+                    <p>
+                    Mỗi chúng ta sinh ra đều có cả điểm mạnh và điểm yếu. Thần số học nhìn cuộc sống
+                    như thể đó là một quá trình giáo dục nhằm phát huy và nâng cao tài năng của chúng ta,
+                    biến điểm yếu thành điểm mạnh. Điều này nhằm giúp hoàn thiện bản thể của chúng ta.                
+                    </p>
+                    <p>
+                    Công việc trở nên toàn vẹn là trong đó chúng ta phải đối mặt với những điểm yếu của
+                    bản thân và có ý thức rèn luyện để hoàn thiện nó. Có 4 Thách thức chúng ta phải đối mặt
+                    trong cuộc sống. Nhiều người trong chúng ta sẽ gặp lại cùng một thách thức nhiều lần,
+                    trong khi những người khác có 4 thách thức khác nhau để học.                
+                    </p>
+                    <p>
+                    Những Thách thức trên Đường đời của bạn cung cấp những bài học cụ thể mà bạn phải
+                    tham gia để truyền cảm hứng và giúp bạn, cuộc sống sẽ đặt bạn vào những tình huống
+                    đòi hỏi những đặc điểm cụ thể của những con số Thách thức của riêng bạn.
+                    </p>
+                    <p>
+                    4 Thách thức bạn cần phải vượt qua trong suốt cuộc đời này sẽ ảnh hưởng đến bạn
+                    trong các giai đoạn khác nhau của cuộc đời. Ngoại trừ Thách thức thứ 3 kéo dài từ khi
+                    sinh ra cho đến khi chết (Thách thức chính). Những thách thức là những giai đoạn phải trải
+                    qua trong cuộc sống của bạn, không giới hạn trong những năm cụ thể giống như Đỉnh cao
+                    hay Chu kỳ cuộc sống.
+                    </p>
+                    <p>
+                    Tất cả Thách thức của bạn là có sẵn trong ngày bạn sinh ra.
+                    </p>
+                </div>
+                <div>
+                    <h2 style="text-align: center;">THÁCH THỨC 1 (0-30/35t): ${content[6].number}</h2>
+                    ${content[6].content}
+                </div>
+                <div>
+                    <h2 style="text-align: center;">THÁCH THỨC 2 (30/35-55/60t): ${content[7].number}</h2>
+                    ${content[7].content}
+                </div>
+                <div>
+                    <h2 style="text-align: center;">THÁCH THỨC 3 (suốt đời): ${content[8].number}</h2>
+                    ${content[8].content}
+                </div>
+                <div>
+                    <h2 style="text-align: center;">THÁCH THỨC 4 (55/60-hết): ${content[9].number}</h2>
+                    ${content[9].content}
+                </div>
+                <div>
+                    <h2>Phần III: BẠN VÀ CON ĐƯỜNG CUỘC SỐNG CỦA BẠN</h2>
+                    <p>
+                    Bây giờ chúng ta sẽ xem xét các số trong biểu đồ của bạn bắt nguồn từ sự kết hợp của cả tên và
+                    ngày sinh của bạn. Các con số trong phần này và phần tiếp theo sẽ giúp làm trơn tru con đường của
+                    bạn. Khi bạn tìm hiểu thêm về bản thân, bạn có thể bắt đầu nhận ra những đặc điểm mà trước đây bạn
+                    không biết.
+                    </p>
+                </div>
+                <div>
+                    <h2 style="text-align: center;">CẦU NỐI ĐƯỜNG ĐỜI/SỨ MỆNH</h2>
+                    <p>
+                    Cầu nối Đường đời/Sứ mệnh đập tan lớp vỏ bọc và mở ra bản chất con người. Tất cả chúng ta đều
+                    nghĩ về việc chúng ta thực sự là ai. Chúng ta có tham vọng và cảm hứng cho chúng ta biết chúng ta
+                    muốn trở thành ai. Thường thì chúng ta bị giằng xé giữa người mà chúng ta nghĩ chúng ta là và con
+                    người thật của chúng ta vẫn bị giấu kín. Số cầu nối này giúp mọi người có được sự chấp nhận bản thân
+                    và định hướng đúng đắn trong cuộc sống.
+                    </p>
+                    <p>
+                    Đây là một cầu nối ẩn dụ giữa con người thật của bạn và danh tiếng mà bạn tạo ra cho chính bạn.
+                    Khi bạn bước lên cây cầu, bạn tiến tới việc tiết lộ bạn là ai. Số cầu nối này chỉ bạn biết cách làm cho
+                    mối quan hệ giữa số Đường đời và số Sứ mệnh của mình thuận lợi hơn và tương thích hơn.                    
+                    </p>
+                    <h2 style="text-align: center; color: #9FD319;">Số cầu nối : ${content[10].number}</h2>
+                    ${content[10].content}
+                </div>
+                <div>
+                    <h2 style="text-align: center;">TRƯỞNG THÀNH</h2>
+                    <p>
+                    Số trưởng thành của bạn cho thấy mong muốn tiềm ẩn dần dần xuất hiện ở độ tuổi từ 30 đến 35.
+                    Mục tiêu này bắt đầu xuất hiện khi bạn hiểu rõ hơn về bản thân. Bạn nhận thức rõ hơn về con người
+                    bạn, mục tiêu thực sự của bạn trong cuộc sống là gì và bạn muốn đặt hướng đi nào cho cuộc sống của
+                    mình. Bạn không còn lãng phí thời gian và năng lượng cho những thứ không thuộc về bản chất của bạn.
+                    </p>
+                    <p>
+                    Bất kể bạn bao nhiêu tuổi, cuộc sống của bạn đang được điều hướng tới một mục tiêu rất cụ thể.
+                    Mục tiêu đó có thể được coi là một phần thưởng sau những nỗ lực hiện tại của bạn, thường thì bạn
+                    không ý thức được nó.
+                    </p>
+                    <p>
+                    Ảnh hưởng của số trưởng thành có thể xuất hiện từ thời thơ ấu nhưng chúng ta có xu hướng đánh
+                    mất chúng sau đó. Nhưng dù thế nào thì nó vẫn tác động đến cuộc sống của bạn mọi lúc
+                    </p>
+                    <p>
+                    Số trưởng thành của bạn bắt đầu có tác động sâu sắc hơn đến cuộc sống của bạn sau tuổi 35. Ảnh
+                    hưởng của số này tăng dần khi bạn già đi.
+                    </p>
+                    <div class="number">${content[11].number}</div>
+                    ${content[11].content}
+                </div>
+                <div>
+                    <h2 style="text-align: center;">SỐ SUY NGHĨ HỢP LÝ</h2>
+                    <p>
+                    Đây là một con số đặc biệt phản ánh phong cách suy nghĩ và các kiểu ra quyết định của bạn. Tất
+                    nhiên, nó không phải là một trong những con số cho thấy đường đời hay tiềm thức của bạn nhưng nó
+                    cho thấy cơ chế của quá trình suy nghĩ của bạn. Về cơ bản, nó nói rất nhiều về khả năng hành động của
+                    bạn trong các tình huống căng thẳng. Nó cho thấy chất lượng của các giải pháp bạn tìm thấy và các xu
+                    hướng lựa chọn của bạn.
+                    </p>
+                    <p>
+                    Nhiều người không thể nói chắc chắn họ có phong cách suy nghĩ nào vì rất khó để ước tính chính
+                    xác bản thân. Bài đọc này sẽ giúp bạn hiểu nhóm các tư tưởng mà bạn thuộc về. Ngoài ra, nếu bạn có
+                    thể biết được số suy nghĩ hợp lý của các đối tác bạn có thể xây dựng các chiến lược giao tiếp dựa trên
+                    phong cách suy nghĩ của những người đó.                    
+                    </p>
+                    <div class="number">${content[12].number}</div>
+                    ${content[12].content}
+                </div>
+                <div>
+                    <h2 style="text-align: center;">CHU KỲ CUỘC SỐNG</h2>
+                    <p>
+                    Giống như hầu hết các câu chuyện, có ba phần trong cuộc sống của chúng ta:
+                    </p>
+                    <p>
+                    Chu kỳ đầu tiên hoặc giai đoạn mở đầu: Chúng ta mò mẫm đi tìm bản chất thực sự của chúng ta.
+                    Đồng thời, chúng ta đang cố gắng đối phó với các nhân tố tác động mạnh mẽ có mặt trong môi trường
+                    sống của chúng ta. Ví dụ: cha mẹ và các điều kiện kinh tế xã hội của gia đình chúng ta…
+                    </p>
+                    <p>
+                    Chu kỳ thứ hai - giai đoạn giữa của cuộc đời, mang đến sự xuất hiện dần dần của tài năng cá nhân
+                    và sáng tạo của chúng ta. Phần đầu của chu kỳ này: 30 - 35 tuổi đại diện cho một cuộc đấu tranh để
+                    tìm vị trí của chúng ta trên thế giới này, trong khi những năm cuối tuổi 30, 40 và đầu tuổi 50: chúng ta
+                    nhìn thấy mức độ tự làm chủ và ảnh hưởng lớn hơn tới môi trường.
+                    </p>
+                    <p>
+                    Chu kỳ thứ ba - cuối cùng, đại diện cho sự nở hoa nội tâm của chúng ta, như vậy bản chất thực sự
+                    của chúng ta cuối cùng đã có kết quả. Chính trong chu kỳ này, người ta có mức độ thể hiện bản thân và
+                    sức ảnh hưởng lớn nhất.
+                    </p>
+                </div>
+                <div>
+                    <h2 style="text-align: center; color: #0070C0">CHU KỲ 1 (0-33t): ${content[13].number}</h2>
+                    ${content[13].content}
+                    <h2 style="text-align: center; color: #FFFF00">CHU KỲ 2 (34-59t): ${content[14].number}</h2>
+                    ${content[14].content}
+                    <h2 style="text-align: center; color: #FFFF00">CHU KỲ 3 (60t-hết): ${content[15].number}</h2>
+                    ${content[15].content}
+                </div>                
+                <div>
+                    <h2 style="text-align: center;">4 CHU KỲ ĐỈNH CAO</h2>
+                    <p>
+                    “Đỉnh cao” là bốn chu kỳ dài hạn trên Đường đời của bạn. Mỗi “Đỉnh cao”đại diện cho một bài học
+                    cụ thể mà bạn đang làm.
+                    </p>
+                    <p>
+                    Các “Đỉnh cao” rất quan trọng. Sự chuyển đổi từ một “Đỉnh cao” sang “Đỉnh cao” kế tiếp bạn có thể
+                    cảm nhận thấy rất rõ ràng. “Đỉnh cao” của bạn tiết lộ các điều kiện và sự kiện chung mà bạn sẽ trải qua
+                    trong thời gian đó. “Đỉnh cao” mô tả môi trường hoặc thách thức thiết yếu mà bạn sẽ phải đối mặt. Bạn
+                    có thể chuẩn bị cho thời gian phía trước bằng cách biết số “Đỉnh cao” sắp tới của mình
+                    </p>
+                    <p>
+                    Việc chuyển đổi từ một “Đỉnh cao” sang kế tiếp thường được chuẩn bị trước khoảng 2 năm. Đó là 2
+                    năm đặc biệt và thay đổi mạnh mẽ. Bạn có thể sẽ đưa ra một số quyết định thay đổi cuộc sống - hôn
+                    nhân, công việc, sự nghiệp hoặc thay đổi lớn trong tính cách của bạn.
+                    </p>
+                    <p>
+                    Có lẽ sự thay đổi mạnh mẽ nhất - bên trong cũng như bên ngoài - là sự chuyển đổi từ Đỉnh cao thứ
+                    nhất sang Đỉnh cao thứ hai. Bạn bắt đầu cảm thấy tác động của sự thay đổi sắp tới này khoảng hai năm
+                    trước. Đây thường là một quá trình chuyển đổi khó khăn, nhưng một khi đã vượt qua thường mang lại
+                    cảm giác rõ ràng về phương hướng trong cuộc sống của một người. Nó cũng cung cấp cho bạn một
+                    cảm giác vững chắc hơn nhiều về bản sắc của bạn. Đó là một cửa ngõ cho sự trưởng thành.
+                    </p>
+                </div>
+                <div>
+                    <h2 style="text-align: center; color: #109611">ĐỈNH CAO 1 (0-33t): ${content[16].number}</h2>
+                    ${content[16].content}
+                </div>
+                <div>
+                    <h2 style="text-align: center; color: #0070C0">ĐỈNH CAO 2 (33-42t): ${content[17].number}</h2>
+                    ${content[17].content}
+                </div>
+                <div>
+                    <h2 style="text-align: center; color: #0070C0">ĐỈNH CAO 3 (42-51t): ${content[18].number}</h2>
+                    ${content[18].content}
+                </div>
+                <div>
+                    <h2 style="text-align: center; color: #109611">ĐỈNH CAO 4 (42-51t): ${content[19].number}</h2>
+                    ${content[19].content}
+                </div>
+                <div>
+                    <h2>Phần IV: NHỮNG ĐẶC ĐIỂM CỤ THỂ CỦA BẠN</h2>
+                </div>
+                <div>
+                    <h2 style="text-align: center;">SỐ CÂN BẰNG</h2>
+                    <p>
+                    Mỗi người đều có một phong cách ứng xử nhất định khi có điều gì đó tiêu cực xảy ra. Một số trở nên
+                    tuyệt vọng và nhượng bộ, và những người khác rơi vào một cơn thịnh nộ.
+                    </p>
+                    <p>
+                    Số cân bằng đến với chúng ta trong hoàn cảnh khó khăn. Nó chỉ cho chúng ta hành vi đúng đắn để
+                    giải quyết vấn đề dễ dàng nhất có thể và không làm tổn thương những người xung quanh chúng ta.
+                    Chúng ta thường mất kiểm soát và đưa ra quyết định cảm tính hoặc nói những lời dẫn đến hậu quả
+                    không mong muốn.                    
+                    </p>
+                    <p>
+                    Nếu bạn muốn tìm hiểu làm thế nào để tránh sự leo thang của vấn đề hoặc cách khắc phục tình
+                    huống khi nó đã xuất hiện, số cân bằng sẽ cung cấp cho bạn.
+                    </p>
+                    <div class="number">${content[20].number}</div>
+                    ${content[20].content}
+                </div>
+                <div>
+                    <h2 style="text-align: center;">ĐAM MÊ TIỀM ẨN</h2>
+                    <p>
+                    Niềm đam mê tiềm ẩn của bạn cho thấy một hoặc nhiều sức mạnh và tài năng đặc biệt mà bạn dựa
+                    vào và có sẵn cho bạn. Đam mê tiềm ẩn đại diện cho lĩnh vực chuyên môn cụ thể của bạn, hoặc một
+                    tài năng tập trung.
+                    </p>
+                    <p>
+                    Nói một cách ẩn dụ, tài năng này có thể được coi là có một sức mạnh riêng để định hình cuộc sống
+                    của bạn. Sự tồn tại của nó mang đến cho bạn một khát vọng mạnh mẽ để phát triển và thể hiện khả
+                    năng đặc biệt đó. Tài năng đòi hỏi bạn thể hiện nó, rằng bạn trải nghiệm phần này của bạn, và bạn sống
+                    theo bản chất của nó. Theo cách này, đam mêm tiềm ẩn định hình tính cách và định hướng cuộc sống
+                    của bạn.
+                    </p>
+                    <h2 style="text-align: center;">Đam mê tiềm ẩn ${content[21].number}</h2>
+                    ${content[21].content}
+                </div>
+                <div>
+                    <h2 style="text-align: center;">NỀN TẢNG</h2>
+                    <p>
+                    Chữ cái đầu tiên của tên đầy đủ của bạn khi sinh được gọi là Nền tảng. Nó cung cấp
+                    cho bạn một dấu hiệu của nhân vật của bạn, đặc biệt là trong cách bạn tiếp cận các cơ
+                    hội và trở ngại.                    
+                    </p>
+                    <p>
+                    Chữ cái cuối cùng của tên bạn cho thấy khả năng và thái độ của bạn đối với việc hoàn
+                    thành các dự án mà bạn bắt đầu.
+                    </p>
+                    <h2 style="text-align: center; color:#EB5680;">NỀN TẢNG ${content[22].number}</h2>
+                    ${content[22].content}
+                </div>
+                <div>
+                    <h2 style="text-align: center;">TIỀM THỨC ẨN</h2>
+                    <p>
+                    Hầu hết mọi người trong cuộc sống này phải đối mặt với những trở ngại theo thời gian. Mặc dù chúng
+                    tôi biết những bước chúng tôi cần phải thực hiện, chúng tôi thường không đối phó với chúng về mặt cảm
+                    xúc. Rất nhiều người tự trách mình vì những vấn đề xảy ra trong cuộc sống của họ, và phản ứng cảm
+                    xúc mạnh mẽ đến mức bản thân vấn đề dường như không quá lớn. Tuy nhiên, hầu hết chúng ta quên
+                    mất những điểm mạnh và lợi thế có thể và phải được sử dụng trong những tình huống chúng ta cần bảo
+                    vệ bản thân hoặc chứng minh ai đó sai. Số tự tin tiềm thức hoặc tiềm thức của bạn có nghĩa là để giúp
+                    bạn nhấn mạnh những đặc điểm đó trong bạn, đó là chìa khóa để vượt qua những trở ngại. Những đặc
+                    điểm này đôi khi sẽ giúp bạn giải quyết chỉ một phần của vấn đề, đôi khi giúp bạn bình tĩnh vượt qua
+                    mọi thứ và đôi khi là công cụ chính của bạn để thoát khỏi rắc rối. Con số này cho thấy các đặc điểm
+                    mà bạn cần phát triển để phản ứng với những rắc rối bất ngờ dưới bất kỳ hình thức nào.                    
+                    </p>
+                    <h2 style="text-align: center; color:#00B0F0;">Tiềm thức ẩn ${content[23].number}</h2>
+                    ${content[23].content}
+                </div>
+                <div>
+                    <h2 style="text-align: center;">4 CẤP ĐỘ THỂ HIỆN CỦA SỨ MỆNH</h2>
+                    <p>
+                    Mỗi người trải nghiệm cuộc sống ở bốn cấp độ khác nhau: cơ thể vật lý, tinh thần, cảm xúc và trực
+                    giác. Mỗi lĩnh vực này nhận thức và xử lý một loại thông tin cụ thể.                    
+                    </p>
+                    <p>
+                    Cơ thể vật lý có khả năng chạm, nếm, khoái cảm và đau đớn. Nó cung cấp cho chúng ta một cảm
+                    giác về thế giới vật chất. Tinh thần, cảm xúc và trực giác nhận thức về thế giới vô hình.
+                    </p>
+                    <p>
+                    Bốn yếu tố này tồn tại trong tất cả chúng ta nhưng mỗi người lại có một yếu tố chiếm ưu thế. Nó
+                    được thể hiện thường xuyên hoặc mãnh liệt hơn các yếu tố khác.
+                    </p>
+                    <p>
+                    Cấp độ vật lý phản ánh cách chúng ta xử lý sức mạnh của mình.
+                    </p>
+                    <p>
+                    Cấp độ tinh thần phản ánh loại suy nghĩ nào chúng ta có và cách chúng ta lên kế hoạch hành động
+                    kỹ lưỡng.
+                    </p>
+                    <p>
+                    Cấp độ cảm xúc thể hiện hình ảnh tình cảm của bạn.
+                    </p>
+                    <p>
+                    Cấp độ trực giác cho thấy thế giới nội tâm của bạn, nguồn cảm hứng và mức độ cân bằng của bạn.
+                    Đó là một chỉ số liên quan tới tâm linh của bạn. Trực giác cho bạn cái nhìn về thế giới trong nháy mắt,
+                    không thông qua lý trí.
+                    </p>
+                </div>
+                <div>
+                    <h2 style="text-align: center; color:#9FD319;">CẤP ĐỘ VẬT LÝ ${content[24].number} (1)</h2>
+                    ${content[24].content}
+                    <h2 style="text-align: center; color:#EB5680;">CẤP ĐỘ TINH THẦN ${content[25].number} (1)</h2>
+                    ${content[25].content}
+                    <h2 style="text-align: center; color:#FFFF00;">CẤP ĐỘ CẢM XÚC ${content[26].number} (2)</h2>
+                    ${content[26].content}
+                    <h2 style="text-align: center; color:#0070C0;">CẤP ĐỘ TRỰC GIÁC ${content[27].number} (5)</h2>
+                    ${content[27].content}
+                </div>
+                <div>
+                    <h2>Phần V: NHỮNG ĐẶC TRƯNG VÀ TÍNH CHẤT 3 NĂM TỚI</h2>
+                </div>
+                <div>
+                    <h2 style="text-align: center;">NĂM CÁ NHÂN</h2>
+                    <p>
+                    Số “Năm cá nhân” của bạn là một dấu hiệu mạnh mẽ về các xu hướng và hoàn cảnh bạn sẽ trải qua
+                    trong một năm. Chu kỳ “Năm cá nhân” của bạn dựa trên chu kỳ Năm Quốc tế và do đó chạy đồng thời
+                    với năm dương lịch.
+                    </p>
+                    <p>
+                    Có 9 “Năm cá nhân” tạo nên một vòng tròn hoàn chỉnh.
+                    </p>
+                    <p>
+                    Mỗi một vòng cho thấy sự tiến triển hay sự tiến hóa một phần cụ thể trong sự tăng trưởng của bạn.
+                    Sự tiến bộ của bạn có thể được nhìn thấy rất logic, từ giai đoạn trứng nước hoặc bắt đầu một giai đoạn
+                    tăng trưởng trong cuộc đời bạn, cho đến khi kết thúc của quá trình đó. “Năm cá nhân” số 1 chỉ ra những
+                    bước đầu tiên của bạn theo một hướng mới. Những năm tiếp theo cho thấy sự tiến bộ của bạn trên con
+                    đường này, kết thúc 9 “Năm cá nhân” của bạn, hoàn thành một chu kỳ. Dưới đây là một mô tả về “Năm
+                    cá nhân” hiện tại của bạn và 2 năm tiếp theo. Nó cho biết bạn đang ở đâu trên chiếc xe 9 năm.                    
+                    </p>
+                    <p>
+                    Năm cá nhân hình thành các bước xây dựng và đánh dấu sự tiến bộ của bạn trong suốt cuộc đời.
+                    </p>
+                </div>
+                <div>
+                    <h2 style="text-align: center; color:#9FD319;">NĂM CÁ NHÂN 2020: ${content[28].number}</h2>
+                    ${content[28].content}
+                </div>
+                <div>
+                    <h2 style="text-align: center; color:#00B0F0;">NĂM CÁ NHÂN 2021: ${content[29].number}</h2>
+                    ${content[29].content}
+                </div>
+                <div>
+                    <h2 style="text-align: center; color:#0070C0;">NĂM CÁ NHÂN 2022: ${content[30].number}</h2>
+                    ${content[30].content}
+                </div>
+                <div>
+                    <h2 style="text-align: center;">CHU KỲ TINH HOA</h2>
+                    <p>
+                    Số “Tinh hoa” và số “Năm cá nhân” là hai chỉ số thiết yếu của các tác động sẽ ảnh hưởng đến cuộc
+                    sống của bạn trong suốt năm của bất kỳ năm nào.
+                    </p>
+                    <p>
+                    Trong khi chu kỳ Năm cá nhân diễn ra từ tháng 1 đến tháng 1, thì chu kỳ Tinh hoa được cảm nhận
+                    mạnh mẽ nhất từ sinh nhật đến sinh nhật. Ví dụ, nếu chu kỳ Tinh hoa của bạn là 8 cho năm 2019, bạn
+                    sẽ bắt đầu cảm thấy ảnh hưởng của số 8 đó một cách mạnh mẽ nhất sau sinh nhật năm 2019 của bạn.
+                    Ảnh hưởng sẽ bắt đầu suy yếu dần trong năm 2019 và cuối cùng sẽ kết thúc vào sinh nhật năm 2020
+                    của bạn.
+                    </p>
+                    <p>
+                    Số Tinh hoa chỉ ra những bài học bạn sẽ giải quyết trong năm đó. Nó nói rất nhiều về cách bạn sẽ
+                    nhận thức môi trường của bạn. Nó cũng đưa ra lời khuyên rõ ràng để bạn có thể thành công nhất trong
+                    năm, nghĩa là loại hành vi nào sẽ được hỗ trợ bởi môi trường của bạn, và loại nào sẽ kém hiệu quả hơn.
+                    </p>
+                </div>
+                <div>
+                    <h2 style="text-align: center; color:#EB5680;">CHU KỲ TINH HOA 2020: ${content[31].number}</h2>
+                    ${content[31].content}
+                </div>
+                <div>
+                    <h2 style="text-align: center; color:#EB5680;">CHU KỲ TINH HOA 2021: ${content[32].number}</h2>
+                    ${content[32].content}
+                </div>
+                <div>
+                    <h2 style="text-align: center; color:#EB5680;">CHU KỲ TINH HOA 2022: ${content[33].number}</h2>
+                    ${content[33].content}
+                </div>
             </body>
         </html>
     </body>
 </html>
 
-    `, options).toStream(function(err, stream){
-        stream.pipe(res);
-      });
+    `, options).toBuffer(async (err, buffer) => {
+        pdfmain = buffer;
+        if (pdfmain && pdfcover) {
+            const merged = await merge([pdfcover, pdfmain]);
+            res.end(merged, 'binary');
+        }
+    });
+
+    pdf.create(`
+        <html>
+            <body style="margin: 0;">
+                <div id="bia" style="position: relative; padding: 0;">
+                    <img style="width:8.27in;height:11.69in;" src="${process.env.BACKEND_URL}/img/cover.png">
+                    <div style="position: absolute; bottom: 1.3in; width: 100%;text-align: center;"><span style="font-size:24pt;color:#fff;text-transform: uppercase;">${name} ${birthday}</span></div>
+                </div>
+            </body>
+        </html>
+        `, ).toBuffer(async (err, buffer) => {
+            pdfcover = buffer;
+            if (pdfmain && pdfcover) {
+                const merged = await merge([pdfcover, pdfmain]);
+                res.end(merged, 'binary');
+            }
+        });
+      
 });
 module.exports = router;
