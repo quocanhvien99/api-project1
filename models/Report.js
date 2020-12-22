@@ -1,5 +1,11 @@
 const mongoose = require('mongoose');
 
+const contentSchema = new mongoose.Schema({
+	content: String,
+	number: String,
+	key: String
+})
+
 const reportSchema = new mongoose.Schema({
 	name: {
 		type: String,
@@ -13,10 +19,7 @@ const reportSchema = new mongoose.Schema({
 		type: Date,
 		require: true
 	},
-	content: {
-		type: String,
-		require: true
-	},
+	content: [contentSchema],
 	userId: {
 		type: String,
 		require: true

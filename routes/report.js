@@ -3,15 +3,58 @@ var pdf = require('html-pdf');
 const authentication = require('../authentication');
 const Report = require('../models/Report');
 const User = require('../models/User');
+const Content = require('../models/Content');
 
 router.post('/', authentication, async (req, res) => {
+    let temp = await Promise.all([
+        Content.find({key: 'SỐ SỨ MỆNH', number: '12/3'}),
+        Content.find({key: 'KHÁT TÂM', number: '18/9'}),
+        Content.find({key: 'NHÂN CÁCH', number: '21/3'}),
+        Content.find({key: 'CẦU NỐI KHÁT TÂM/NHÂN CÁCH', number: '6'}),
+        Content.find({key: 'CON SỐ ĐƯỜNG ĐỜI', number: '12/3'}),
+        Content.find({key: 'SỐ NGÀY SINH', number: '30'}),
+        Content.find({key: 'THÁCH THỨC 1', number: '3'}),
+        Content.find({key: 'THÁCH THỨC 2', number: '0'}),
+        Content.find({key: 'THÁCH THỨC 3', number: '3'}),
+        Content.find({key: 'THÁCH THỨC 4', number: '3'}),
+        Content.find({key: 'CẦU NỐI ĐƯỜNG ĐỜI/SỨ MỆNH', number: '0'}),
+        Content.find({key: 'TRƯỞNG THÀNH', number: '6'}),
+        Content.find({key: 'SỐ SUY NGHĨ HỢP LÝ', number: '3'}),
+        Content.find({key: 'CHU KỲ 1', number: '6'}),
+        Content.find({key: 'CHU KỲ 2', number: '3'}),
+        Content.find({key: 'CHU KỲ 3', number: '3'}),
+        Content.find({key: 'ĐỈNH CAO 1', number: '9'}),
+        Content.find({key: 'ĐỈNH CAO 2', number: '6'}),
+        Content.find({key: 'ĐỈNH CAO 3', number: '6'}),
+        Content.find({key: 'ĐỈNH CAO 4', number: '9'}),
+        Content.find({key: 'SỐ CÂN BẰNG', number: '2'}),
+        Content.find({key: 'ĐAM MÊ TIỀM ẨN', number: '3'}),
+        Content.find({key: 'NỀN TẢNG', number: 'h'}),
+        Content.find({key: 'TIỀM THỨC ẨN', number: '5'}),
+        Content.find({key: 'CẤP ĐỘ VẬT LÝ', number: '4'}),
+        Content.find({key: 'CẤP ĐỘ TINH THẦN', number: '8'}),
+        Content.find({key: 'CẤP ĐỘ CẢM XÚC', number: '12/3'}),
+        Content.find({key: 'CẤP ĐỘ TRỰC GIÁC', number: '24/6'}),
+        Content.find({key: 'NĂM CÁ NHÂN 2020', number: '4'}),
+        Content.find({key: 'NĂM CÁ NHÂN 2021', number: '5'}),
+        Content.find({key: 'NĂM CÁ NHÂN 2022', number: '6'}),
+        Content.find({key: 'CHU KỲ TINH HOA 2020', number: '17/8'}),
+        Content.find({key: 'CHU KỲ TINH HOA 2021', number: '17/8'}),
+        Content.find({key: 'CHU KỲ TINH HOA 2022', number: '17/8'})
+    ]);
+    let content = [];
+    temp.map((item) => {
+        content.push({ content: item[0].content, number: item[0].number, key: item[0].key });
+    })
+    
+    
     //Create a new report
 	const report = new Report({
 		name: req.body.name,
 		sex: req.body.sex,
 		birthday: req.body.birthday,
 		userId: req.user.id,
-        content: 'something'
+        content: content
 	});
 	try {
 		const savedReport = await report.save();
@@ -140,7 +183,12 @@ router.get('/statistic',authentication, async (req, res) => {
 	  	})
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
+    const reportId = req.params.id;
+    const data = await Report.findById(reportId);
+    const content = data.content;
+    console.log(content);
+
 	const options = {
 		format: 'A4'
 	};	
@@ -157,6 +205,10 @@ router.get('/:id', (req, res) => {
                 box-sizing: border-box;              
                 page-break-after: always;
                 padding: 0 0.5in;
+            }
+            .number {
+                font-size: xx-large;
+                text-align: center;
             }
             #mucluc > p {
                 margin: 10px 0;
@@ -259,8 +311,163 @@ cơ hội bạn sẽ gặp trên con đường của mình và các thuộc tín
                         Phần 1 này giống như một cái nhìn từ xa, các phần tiếp theo giải thích ý nghĩa của từng con số một
 cách chi tiết hơn. Chúng ta sẽ dần dần xây dựng một bức tranh đầy đủ hơn về cá nhân phức tạp và độc
 đáo của bạn.
+                    </p>                    
+                </div>
+                <div>
+                    <h2 style="text-align: center;">SỐ SỨ MỆNH</h2>
+                    <p>
+                    Số Sứ mệnh của bạn cho thấy sự cấu thành từ thể chất và tinh thần của bạn, định hướng hay mục
+                    tiêu cuộc sống của bạn. Nó đại diện cho một mục tiêu trọn đời mà bạn đang nhắm tới. Bạn làm việc để
+                    hoàn thành tiềm năng này mỗi ngày trong cuộc sống của bạn. Do đó, số Sứ mệnh cho thấy mục tiêu
+                    bên trong của bạn, con người mà bạn muốn trở thành.                    
                     </p>
-                    
+                    <p>
+                    Số Sứ mệnh cho thấy tài năng, khả năng và những thiếu sót đã ở bên bạn khi bạn bước vào cơ thể
+                    con người. Tên của bạn và những con số bắt nguồn từ nó, cho thấy sự phát triển cũng như những tài
+                    năng và vấn đề trong suốt cuộc đời của bạn.
+                    </p>
+                    <p>
+                    Đối với những người chấp nhận thuyết “Luân hồi”, sự rung động của tên đầy đủ của bạn có thể được
+                    xem là toàn bộ sự tiến hóa cá nhân của bạn, kinh nghiệm, tài năng và trí tuệ tích lũy qua nhiều kiếp
+                    sống. Mỗi trải nghiệm, dù lớn hay nhỏ, dọc theo con đường tiến hóa này đã ảnh hưởng đến sự phát triển
+                    của bạn và đưa bạn đến trạng thái hiện tạ
+                    </p>
+                    <p>
+                    Sứ mệnh là bản thể của bạn. Đường đời là bài học lớn mà bạn đang cố gắng học trong cuộc sống
+                    này. Nhân cách của bạn sẽ xuất hiện dần dần qua thời gian.
+                    </p>
+                    <p>
+                    Số Sứ mệnh của bạn giúp bạn hiểu được bản chất cơ bản và các khả năng và cũng như vấn đề vốn
+                    có trong bản thể của bạn.
+                    </p>
+                    <div class="number">${content[0].number}</div>
+                    ${content[0].content}
+                </div>
+                <div>
+                    <h2 style="text-align: center;">KHÁT TÂM</h2>
+                    <p>
+                    Khát tâm là nội tâm của bạn. Nó cho thấy sự thôi thúc tiềm ẩn, động lực thực sự của bạn. Nó tiết lộ ý
+                    định chung đằng sau nhiều hành động của bạn.
+                    </p>
+                    <p>
+                    Do đó, nó ảnh hưởng đáng kể đến các lựa chọn bạn thực hiện trong cuộc sống. Số Khát tâm được
+xem là một phần của bức tranh lớn, được gọi là những con số cốt lõi, bao gồm Đường đời, Sứ mệnh,
+Ngày bạn được sinh ra và Nhân cách. Nhưng mỗi con số là một khía cạnh khác của bạn.
+                    </p>
+                    <p>
+                    Số Sứ mệnh cho thấy tài năng và khả năng của bạn, và định hướng chung của bạn trong cuộc sống.
+Số Đường đời là bài học trung tâm bạn đến thế giới này để học hỏi. Ngày bạn được sinh ra có mối liên
+hệ rất chặt chẽ với Đường đời của bạn. Nó tiết lộ những tài năng cụ thể mà bạn sở hữu, sẽ hữu ích cho
+bạn trong việc thực hiện Đường đời của bạn. Số Nhân cách tiết lộ cách mọi người có xu hướng nhìn thấy
+bạn. Nó cũng cho thấy những đặc điểm bạn đang thể hiện ra với thế giới. Số Khát tâm thể hiện bản sắc
+tâm hồn của bạn.
+                    </p>
+                    <div class="number">${content[1].number}</div>
+                    ${content[1].content}
+                </div>
+                <div>
+                    <h2 style="text-align: center;">NHÂN CÁCH</h2>
+                    <p>
+                    Nhân cách là cách bạn thể hiện ra bên ngoài cho thế giới, đó là bản chất thật của bạn. Đó là những
+khía cạnh mà bạn cảm thấy thoải mái khi chia sẻ với mọi người ngay từ đầu của một mối quan hệ. Qua
+thời gian và sự tin tưởng, người khác mới có thể hiểu sâu hơn về bản chất của bạn; con người thực sự,
+thực tế, khát hao, Sứ mệnh của bạn, v.v.
+                    </p>
+                    <p>
+                    Số Nhân cách của bạn thường đóng vai trò là một thiết bị kiểm duyệt về những gì bạn gửi đi và
+những gì bạn cho phép tiếp cận. Nó phân biệt đối xử trong các loại người và loại thông tin đưa trái tim và
+tâm trí của bạn. Vì lý do này, nhân cách của bạn thường hẹp hơn và bảo vệ theo định nghĩa của nó so
+với con người thực của bạn. Nó có thể sàng lọc một số điều bạn không muốn giải quyết, nhưng nó cũng
+hoan nghênh những điều đó ngay lập tức liên quan đến bản chất bên trong của bạn.
+                    </p>
+                    <p>
+                    Số Nhân cách của bạn cũng cho biết người khác nhìn nhận bạn như thế nào. Không ai có thể khách
+quan về bản thân mình. Ngay cả những người bạn thân nhất và người thân của chúng ta cũng gặp khó
+khăn khi mô tả cách họ nhìn thấy chúng ta.
+                    </p>
+                    <div class="number">${content[2].number}</div>
+                    ${content[2].content}
+                </div>
+                <div>
+                    <h2 style="text-align: center;">CẦU NỐI KHÁT TÂM/NHÂN CÁCH</h2>
+                    <p>
+                    Chúng ta có định kiến nhất định về bản thân và về những người xung quanh. Chúng ta hiếm khi nghĩ
+rằng hình ảnh của chúng ta về mọi người khác với nhận thức của họ về chính họ - cách họ nhìn nhận và
+hành xử.
+                    </p>
+                    <p>
+                    Bạn có bao giờ tự hỏi tại sao một sự việc, hành động nhưng bạn và những người khác lại có cách
+phản ứng khác nhau không? Câu trả lời là trong cầu nối Khát tâm/Nhân cách. Nó cho thấy sự thật ở
+giữa. Đây là một cây cầu kết nối quan điểm của bạn về bản thân và hình ảnh phản chiếu của bạn trong
+mắt người khác.
+                    </p>
+                    <div class="number">${content[3].number}</div>
+                    ${content[3].content}
+                </div>
+                <div>
+                    <h2>Phần II: CON ĐƯỜNG CUỘC SỐNG CỦA BẠN</h2>
+                    <p>
+                    Hơi thở đầu tiên của bạn đánh dấu sự khởi đầu của hành trình của bạn trên con đường chúng tôi gọi
+là Con đường cuộc sống của bạn. Do đó, điều có ý nghĩa là con số quan trọng nhất trong biểu đồ số
+học của bạn đến từ ngày sinh của bạn. Số Đường đời của bạn đưa ra một phác thảo rộng rãi về các cơ
+hội, thách thức và bài học bạn gặp trong suốt cuộc đời. Nó cũng tiết lộ những điểm mạnh, tài năng cụ
+thể và những đặc điểm bạn được trao để giúp bạn vượt qua thử thách và phát triển thành tốt nhất có thể.
+                    </p>
+                </div>
+                <div>
+                <h2 style="text-align: center;">CON SỐ ĐƯỜNG ĐỜI</h2>
+                <p>
+                Nếu có một khoảnh khắc biến đổi hoàn toàn, đó là khoảnh khắc bạn được sinh ra.
+Ngay lúc đó, bạn bước qua cánh cửa vào một thực tại mới - cuộc sống con người. Con số
+quan trọng nhất trong bản đồ Thần số của bạn dựa trên ngày sinh của bạn.
+                </p>
+                <p>
+                Ngay tại thời điểm đó, bạn là một người độc đáo và độc nhất như chính mã ADN hay
+dấu vân tay của bạn. Tất cả mọi thứ đã được sắp đặt sẵn cho bạn giống như một cuộc
+chơi sắp bắt đầu. Cuộc sống với những tiềm năng đã được chuẩn bị cho bạn, bạn hoàn
+toàn tự do để sống cuộc đời mình mong muốn. Phát huy toàn bộ tiềm năng trong bạn hay
+tạo ra một số phiên bản nhỏ hơn của chính bạn - tất cả phụ thuộc vào sự nỗ lực và cam
+kết của bạn. Tiềm năng luôn tồn tại trong bạn, còn bạn là người đưa ra quyết định để biến
+chúng thành hiện thực. Đó là lựa chọn của bạn. Thời điểm bạn sinh ra chính là một con
+số tiềm ẩn
+                </p>
+                <p>
+                Con số Đường đời cho bạn một cái nhìn rộng về những cơ hội, thách thức và bài học
+mà bạn sẽ gặp trong cuộc đời này. Số Đường đời của bạn là thông tin quan trọng nhất có
+sẵn trong bạn.
+                </p>
+                <div class="number">${content[4].number}</div>
+                ${content[4].content}
+                </div>
+                <div>
+                <h2 style="text-align: center;">SỐ NGÀY SINH</h2>
+                <p>
+                Sự ra đời của một cá nhân là một kỳ quan thực sự xảy ra mỗi ngày. “Mỗi người là duy nhất" - đó là
+sự thật và Thần số học biết điều đó. Sẽ không có khoảnh khắc nào khác như thế này. Số sinh nhật đại
+diện cho những đặc điểm, lĩnh vực chuyên môn hoặc kỹ năng bạn cần phát triển và bạn sẽ thành công
+nếu bạn kết nối cuộc sống của mình với nó. Mỗi ngày trong tháng có những đặc điểm riêng được gán
+cho những người sinh ra dưới mỗi ngày đó. Điều đó không có nghĩa là một người không có lựa chọn nào
+khác ngoài việc phát triển chúng. Tuy nhiên, hành trình trong cuộc sống sẽ dễ dàng hơn nhiều nếu cá
+nhân đó tiến bộ trong một điều gì đó mà người ta có thiên hướng cụ thể. Số sinh nhật của bạn có thể tiết
+lộ đặc điểm bẩm sinh tích cực và tiêu cực của bạn
+                </p>
+                <p>
+                Ngay tại thời điểm đó, bạn là một người độc đáo và độc nhất như chính mã ADN hay
+dấu vân tay của bạn. Tất cả mọi thứ đã được sắp đặt sẵn cho bạn giống như một cuộc
+chơi sắp bắt đầu. Cuộc sống với những tiềm năng đã được chuẩn bị cho bạn, bạn hoàn
+toàn tự do để sống cuộc đời mình mong muốn. Phát huy toàn bộ tiềm năng trong bạn hay
+tạo ra một số phiên bản nhỏ hơn của chính bạn - tất cả phụ thuộc vào sự nỗ lực và cam
+kết của bạn. Tiềm năng luôn tồn tại trong bạn, còn bạn là người đưa ra quyết định để biến
+chúng thành hiện thực. Đó là lựa chọn của bạn. Thời điểm bạn sinh ra chính là một con
+số tiềm ẩn
+                </p>
+                <p>
+                Bạn cần biết số sinh nhật của mình vì nó có thể thực hiện công việc của một chiếc la bàn trong việc
+hướng dẫn bạn trong suốt cuộc đời. Bạn không chỉ nhận biết những đặc điểm tích cực và tiêu cực của
+bạn; bạn có thể thấy những gì bạn có thể và làm như thế nào dễ nhất để có được cuộc sống tốt nhất.
+                </p>
+                <div class="number">${content[5].number}</div>
+                ${content[5].content}
                 </div>
             </body>
         </html>
