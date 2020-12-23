@@ -861,7 +861,7 @@ bạn; bạn có thể thấy những gì bạn có thể và làm như thế n�
         <html>
             <body style="margin: 0;">
                 <div id="bia" style="position: relative; padding: 0;">
-                    <img style="width:5in;height:5in;" src="${process.env.BACKEND_URL}/img/cover.png">
+                    <img style="width:8.27in;height:11.69in;" src="${process.env.BACKEND_URL}/img/cover.png">
                     <div style="position: absolute; bottom: 1.3in; width: 100%;text-align: center;"><span style="font-size:24pt;color:#fff;text-transform: uppercase;">${name} ${birthday}</span></div>
                 </div>
             </body>
