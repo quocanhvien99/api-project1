@@ -27,6 +27,17 @@ const passwordValidation = (data) => {
 	return schema.validate(data);
 };
 
+//Report Validation
+const reportValidation = (data) => {
+	const schema = Joi.object({
+		name: Joi.string().max(50).min(5).required(),
+		sex: Joi.string().max(3).min(2).required(),
+		birthday: Joi.date().required()
+	});
+	return schema.validate(data);
+};
+
 module.exports.registerValidation = registerValidation;
 module.exports.loginValidation = loginValidation;
 module.exports.passwordValidation = passwordValidation;
+module.exports.reportValidation = reportValidation;

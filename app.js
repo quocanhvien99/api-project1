@@ -1,23 +1,27 @@
 require('dotenv').config();
 const express = require('express');
+const https = require('https');
+const fs = require('fs');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 3000;
 const mongoose = require('mongoose');
-const passport = require("passport");
+const passport = require('passport');
 const passportSetup = require('./passport-setup');
 const cookieSession = require('cookie-session');
 
 app.use(express.static('public'));
 
-app.use(cookieSession({
-	name: 'session',
-	maxAge: 3600000,
-	//sameSite: 'none',	//chạy ở cùng ip thì không cần
-	//secure: true,
-	keys: [process.env.TOKEN_SECRET]
-}))
+app.use(
+	cookieSession({
+		name: 'session',
+		maxAge: 3600000,
+		//sameSite: 'none',	//chạy ở cùng ip thì không cần
+		//secure: true,
+		keys: [process.env.TOKEN_SECRET],
+	})
+);
 //initalize passport
 app.use(passport.initialize());
 app.use(passport.session());
@@ -31,8 +35,8 @@ const authRoute = require('./routes/auth');
 
 const corsOptions = {
 	origin: process.env.FRONTEND_URL,
-	credentials: true
-  }
+	credentials: true,
+};
 
 //Connect to DB
 mongoose.connect(
@@ -56,5 +60,12 @@ app.use('/api/auth', authRoute);
 // app.get('/', (req, res) => {
 // 	res.status(200).send('API Server');
 // })
-
-app.listen(port, () => console.log('Server is running!'));
+https
+	.createServer(
+		{
+			key: fs.readFileSync('./ssl/selfsigned.key'),
+			cert: fs.readFileSync('./ssl/selfsigned.crt'),
+		},
+		app
+	)
+	.listen(port, () => console.log('Server is running!'));

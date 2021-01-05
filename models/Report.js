@@ -19,7 +19,10 @@ const reportSchema = new mongoose.Schema({
 		type: Date,
 		require: true
 	},
-	content: [contentSchema],
+	content: {
+		type: Buffer,
+		require: true
+	},
 	userId: {
 		type: String,
 		require: true
