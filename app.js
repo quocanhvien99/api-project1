@@ -60,12 +60,4 @@ app.use('/api/auth', authRoute);
 // app.get('/', (req, res) => {
 // 	res.status(200).send('API Server');
 // })
-https
-	.createServer(
-		{
-			key: fs.readFileSync('./ssl/selfsigned.key'),
-			cert: fs.readFileSync('./ssl/selfsigned.crt'),
-		},
-		app
-	)
-	.listen(port, () => console.log('Server is running!'));
+app.listen(port, () => console.log('Server is running!'));
