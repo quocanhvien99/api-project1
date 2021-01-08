@@ -10,8 +10,10 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 const passportSetup = require('./passport-setup');
 const cookieSession = require('cookie-session');
+const path = require('path');
 
-app.use(express.static('public'));
+//app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(
 	cookieSession({
@@ -57,7 +59,8 @@ app.use('/api/content', contentRoute);
 app.use('/important', importantRoute);
 app.use('/api/auth', authRoute);
 
-// app.get('/', (req, res) => {
-// 	res.status(200).send('API Server');
-// })
+app.get('/*', function (req, res) {
+	res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 app.listen(port, () => console.log('Server is running!'));
