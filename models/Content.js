@@ -2,20 +2,20 @@ const mongoose = require('mongoose');
 
 const contentSchema = new mongoose.Schema({
 	content: {
-		type: String
+		type: String,
 	},
 	number: {
+		type: Number,
+		require: true,
+	},
+	key: {
 		type: String,
-		require: true
-    },
-    key: {
-		type: String,
-		require: true
+		require: true,
 	},
 	date: {
 		type: Date,
-		default: Date.now()
-	}
+		default: Date.now(),
+	},
 });
 
 module.exports = mongoose.model('content', contentSchema);

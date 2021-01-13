@@ -1,36 +1,30 @@
 const mongoose = require('mongoose');
 
-const contentSchema = new mongoose.Schema({
-	content: String,
-	number: String,
-	key: String
-})
-
 const reportSchema = new mongoose.Schema({
 	name: {
 		type: String,
-		require: true
+		require: true,
 	},
 	sex: {
 		type: String,
-		require: true
+		require: true,
 	},
 	birthday: {
 		type: Date,
-		require: true
+		require: true,
 	},
 	content: {
 		type: Buffer,
-		require: true
+		require: true,
 	},
 	userId: {
 		type: String,
-		require: true
+		require: true,
 	},
 	date: {
 		type: Date,
-		default: Date.now()
-	}
+		default: Date.now(),
+	},
 });
 
 module.exports = mongoose.model('reports', reportSchema);

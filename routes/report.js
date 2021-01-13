@@ -5,91 +5,94 @@ const authentication = require('../authentication');
 const Report = require('../models/Report');
 const User = require('../models/User');
 const Content = require('../models/Content');
-var html_to_pdf = require('html-pdf-node');
 
 const { reportValidation } = require('../validation');
 
-
 router.post('/', authentication, async (req, res) => {
-    //Validate data
+	//Validate data
 	const { error } = reportValidation(req.body);
-	if (error) return res.status(400).send(error.details[0].message);    
+	if (error) return res.status(400).send(error.details[0].message);
 
-    let numbFromName = nameToNumber(req.body.name);
-    let c = 0;
-    let arr = [];
-    for (let i = 0; i < 32; i++) {
-        arr.push(numbFromName[c++]);
-        if (c > numbFromName.length - 1)    c = 0;
-    }
-    
-    let temp = await Promise.all([
-        Content.find({key: 'ĐƯỜNG ĐỜI', number: arr[0]}),
-        Content.find({key: 'SỨ MỆNH', number: arr[1]}),
-        Content.find({key: 'TRƯỞNG THÀNH', number: arr[2]}),
-        Content.find({key: 'CẦU NỐI ĐƯỜNG ĐỜI/SỨ MỆNH', number: arr[3]}),
-        Content.find({key: 'SỐ NGÀY SINH', number: arr[4]}),
-        Content.find({key: 'KHÁT TÂM', number: arr[5]}),
-        Content.find({key: 'NHÂN CÁCH', number: arr[6]}),
-        Content.find({key: 'CẦU NỐI KHÁT TÂM/NHÂN CÁCH', number: arr[7]}),
-        Content.find({key: 'ĐAM MÊ TIỀM ẨN', number: arr[8]}),
-        Content.find({key: 'BÀI HỌC CUỘC SỐNG', number: arr[9]}),
-        Content.find({key: 'TIỀM THỨC ẨN', number: arr[10]}),
-        Content.find({key: 'SỐ SUY NGHĨ HỢP LÝ', number: arr[11]}),
-        Content.find({key: 'SỐ CÂN BẰNG', number: arr[12]}),
-        Content.find({key: 'NỀN TẢNG', number: arr[13]}),
-        Content.find({key: 'THỂ CHẤT', number: arr[14]}),
-        Content.find({key: 'TINH THẦN', number: arr[15]}),
-        Content.find({key: 'CẢM XÚC', number: arr[16]}),
-        Content.find({key: 'TRỰC GIÁC', number: arr[17]}),
-        Content.find({key: 'CHU KỲ 1', number: arr[18]}),
-        Content.find({key: 'CHU KỲ 2', number: arr[19]}),
-        Content.find({key: 'CHU KỲ 3', number: arr[20]}),
-        Content.find({key: 'ĐỈNH CAO 1', number: arr[21]}),
-        Content.find({key: 'ĐỈNH CAO 2', number: arr[22]}),
-        Content.find({key: 'ĐỈNH CAO 3', number: arr[23]}),
-        Content.find({key: 'ĐỈNH CAO 4', number: arr[24]}),
-        Content.find({key: 'THÁCH THỨC 1', number: arr[25]}),
-        Content.find({key: 'THÁCH THỨC 2', number: arr[26]}),
-        Content.find({key: 'THÁCH THỨC 3', number: arr[27]}),
-        Content.find({key: 'THÁCH THỨC 4', number: arr[28]}),
-        Content.find({key: 'NĂM CÁ NHÂN 2021', number: arr[29]}),
-        Content.find({key: 'NĂM CÁ NHÂN 2022', number: arr[30]}),
-        Content.find({key: 'NĂM CÁ NHÂN 2023', number: arr[31]}),
-    ]);
-    let content = [];
-    temp.map((item) => {
-        content.push({ content: item[0].content, number: item[0].number, key: item[0].key });
-        
-    })
+	let numbFromName = nameToNumber(req.body.name);
+	let c = 0;
+	let arr = [];
+	for (let i = 0; i < 32; i++) {
+		arr.push(numbFromName[c++]);
+		if (c > numbFromName.length - 1) c = 0;
+	}
+	let temp = await Promise.all([
+		Content.find({ key: 'ĐƯỜNG ĐỜI', number: arr[0] }),
+		Content.find({ key: 'SỨ MỆNH', number: arr[1] }),
+		Content.find({ key: 'TRƯỞNG THÀNH', number: arr[2] }),
+		Content.find({ key: 'CẦU NỐI ĐƯỜNG ĐỜI/SỨ MỆNH', number: arr[3] }),
+		Content.find({ key: 'SỐ NGÀY SINH', number: arr[4] }),
+		Content.find({ key: 'KHÁT TÂM', number: arr[5] }),
+		Content.find({ key: 'NHÂN CÁCH', number: arr[6] }),
+		Content.find({ key: 'CẦU NỐI KHÁT TÂM/NHÂN CÁCH', number: arr[7] }),
+		Content.find({ key: 'ĐAM MÊ TIỀM ẨN', number: arr[8] }),
+		Content.find({ key: 'BÀI HỌC CUỘC SỐNG', number: arr[9] }),
+		Content.find({ key: 'TIỀM THỨC ẨN', number: arr[10] }),
+		Content.find({ key: 'SỐ SUY NGHĨ HỢP LÝ', number: arr[11] }),
+		Content.find({ key: 'SỐ CÂN BẰNG', number: arr[12] }),
+		Content.find({ key: 'NỀN TẢNG', number: arr[13] }),
+		Content.find({ key: 'THỂ CHẤT', number: arr[14] }),
+		Content.find({ key: 'TINH THẦN', number: arr[15] }),
+		Content.find({ key: 'CẢM XÚC', number: arr[16] }),
+		Content.find({ key: 'TRỰC GIÁC', number: arr[17] }),
+		Content.find({ key: 'CHU KỲ 1', number: arr[18] }),
+		Content.find({ key: 'CHU KỲ 2', number: arr[19] }),
+		Content.find({ key: 'CHU KỲ 3', number: arr[20] }),
+		Content.find({ key: 'ĐỈNH CAO 1', number: arr[21] }),
+		Content.find({ key: 'ĐỈNH CAO 2', number: arr[22] }),
+		Content.find({ key: 'ĐỈNH CAO 3', number: arr[23] }),
+		Content.find({ key: 'ĐỈNH CAO 4', number: arr[24] }),
+		Content.find({ key: 'THÁCH THỨC 1', number: arr[25] }),
+		Content.find({ key: 'THÁCH THỨC 2', number: arr[26] }),
+		Content.find({ key: 'THÁCH THỨC 3', number: arr[27] }),
+		Content.find({ key: 'THÁCH THỨC 4', number: arr[28] }),
+		Content.find({ key: 'NĂM CÁ NHÂN 2021', number: arr[29] }),
+		Content.find({ key: 'NĂM CÁ NHÂN 2022', number: arr[30] }),
+		Content.find({ key: 'NĂM CÁ NHÂN 2023', number: arr[31] }),
+	]);
+	let content = [];
 
-    const formatDate = (birthday) => {
-        birthday = new Date(birthday);
-        const d = birthday.getDate();
-        const m = birthday.getMonth() + 1;
-        const y = birthday.getFullYear();
-        return d + '/' + m + '/' + y
-    }
-    const name = req.body.name;
-    const sex = req.body.sex;
-    const birthday = formatDate(req.body.birthday);
+	temp.map((item) => {
+		content.push({
+			content: item[0].content,
+			number: item[0].number,
+			key: item[0].key,
+		});
+	});
 
-    var projectRoot = process.cwd();
-    projectRoot = projectRoot.replace(/\\/g,'/');
+	const formatDate = (birthday) => {
+		birthday = new Date(birthday);
+		const d = birthday.getDate();
+		const m = birthday.getMonth() + 1;
+		const y = birthday.getFullYear();
+		return d + '/' + m + '/' + y;
+	};
+	const name = req.body.name;
+	const sex = req.body.sex;
+	const birthday = formatDate(req.body.birthday);
 
-    let pdfmain, pdfcover;
+	var projectRoot = process.cwd();
+	projectRoot = projectRoot.replace(/\\/g, '/');
 
-    const options = {
-        format: 'A4',
-        border: {
-            "top": "0.8in",            // default is 0, units: mm, cm, in, px
-            "right": "0.8in",
-            "bottom": "0.8in",
-            "left": "0.8in"
-        }
-    };
+	let pdfmain, pdfcover;
 
-    pdf.create(`
+	const options = {
+		format: 'A4',
+		border: {
+			top: '0.8in', // default is 0, units: mm, cm, in, px
+			right: '0.8in',
+			bottom: '0.8in',
+			left: '0.8in',
+		},
+	};
+
+	pdf
+		.create(
+			`
     <html>
     <head>
         <style>
@@ -249,48 +252,70 @@ router.post('/', authentication, async (req, res) => {
                         </div>
                         <div style="position: absolute; right: 200px; top: 0; font-weight: bold;">
                             <img src="file:///${projectRoot}/public/img/vi_65.png" style="width: 65px">
-                            <div class="value" style="text-align: center; font-size:large; position: relative; top: -40px">${content[5].number}</div> 
+                            <div class="value" style="text-align: center; font-size:large; position: relative; top: -40px">${
+															content[5].number
+														}</div> 
                         </div>
                         <div style="position: absolute; right: 0; top: -20px; font-weight: bold;">
                             <img src="file:///${projectRoot}/public/img/vi_59.png" style="width: 65px">
-                            <div style="text-align: center; font-size:large; position: relative; top: -60px">${content[2].number}</div> 
+                            <div style="text-align: center; font-size:large; position: relative; top: -60px">${
+															content[2].number
+														}</div> 
                         </div>
                         <div style="position: absolute; right: 0; top: 120px; font-weight: bold;">
                             <img src="file:///${projectRoot}/public/img/vi_71.png" style="width: 65px">
-                            <div style="text-align: center; font-size:large; position: relative; top: -45px">${content[12].number}</div> 
+                            <div style="text-align: center; font-size:large; position: relative; top: -45px">${
+															content[12].number
+														}</div> 
                         </div>
                         <div style="position: absolute; right: 200px; top: 120px; font-weight: bold;">
                             <img src="file:///${projectRoot}/public/img/vi_67.png" style="width: 65px">
-                            <div class="value" style="text-align: center; font-size:large; position: relative; top: -40px">${content[6].number}</div> 
+                            <div class="value" style="text-align: center; font-size:large; position: relative; top: -40px">${
+															content[6].number
+														}</div> 
                         </div>
                         <div style="position: absolute; right: 100px; top: 60px; font-weight: bold;">
                             <img src="file:///${projectRoot}/public/img/vi_57.png" style="width: 65px">
-                            <div class="value" style="text-align: center; font-size:large; position: relative; top: -30px">${content[1].number}</div> 
+                            <div class="value" style="text-align: center; font-size:large; position: relative; top: -30px">${
+															content[1].number
+														}</div> 
                         </div>
                         <div style="position: absolute; left: 0; top: 120px; font-weight: bold;">
                             <img src="file:///${projectRoot}/public/img/vi_53.png" style="width: 65px">
-                            <div class="value" style="text-align: center; font-size:large; position: relative; top: -40px">${content[0].number}</div> 
+                            <div class="value" style="text-align: center; font-size:large; position: relative; top: -40px">${
+															content[0].number
+														}</div> 
                         </div>
                         <div style="position: absolute; left: 0; top: 300px; font-weight: bold;">
                             <img src="file:///${projectRoot}/public/img/vi_69.png" style="width: 65px">
-                            <div class="value" style="text-align: center; font-size:large; position: relative; top: -40px">${content[11].number}</div> 
+                            <div class="value" style="text-align: center; font-size:large; position: relative; top: -40px">${
+															content[11].number
+														}</div> 
                         </div>
                         <div class="nentang" style="position: absolute; right: 50px; top: 270px;">
                             <div>
                                 <div>THỂ CHẤT</div>
-                                <div style="background-color: ${getColor(parseInt(content[14].number))};">${content[14].number}</div>
+                                <div style="background-color: ${getColor(
+																	content[14].number
+																)};">${content[14].number}</div>
                             </div>
                             <div>
                                 <div>TINH THẦN</div>
-                                <div style="background-color: ${getColor(parseInt(content[15].number))};">${content[15].number}</div>
+                                <div style="background-color: ${getColor(
+																	content[15].number
+																)};">${content[15].number}</div>
                             </div>
                             <div>
                                 <div>CẢM XÚC</div>
-                                <div style="background-color: ${getColor(parseInt(content[16].number))};">${content[16].number}</div>
+                                <div style="background-color: ${getColor(
+																	content[16].number
+																)};">${content[16].number}</div>
                             </div>
                             <div>
                                 <div>TRỰC GIÁC</div>
-                                <div style="background-color: ${getColor(parseInt(content[17].number))};">${content[17].number}</div>
+                                <div style="background-color: ${getColor(
+																	content[17].number
+																)};">${content[17].number}</div>
                             </div>
                         </div>
                         <div class="tongquan" style="position: absolute; left: 20px; top: 420px;">
@@ -372,19 +397,27 @@ router.post('/', authentication, async (req, res) => {
                         <div class="tongquan" style="width: 400px; position: absolute; left: 100px; top: 700px;">
                             <div>
                                 <div>Chu kỳ cuộc sống:</div>
-                                <div>${content[18].number}-${content[19].number}-${content[20].number}</div>
+                                <div>${content[18].number}-${
+				content[19].number
+			}-${content[20].number}</div>
                             </div>
                             <div>
                                 <div>Chu kỳ Đỉnh cao:</div>
-                                <div>${content[21].number}-${content[22].number}-${content[23].number}-${content[24].number}</div>
+                                <div>${content[21].number}-${
+				content[22].number
+			}-${content[23].number}-${content[24].number}</div>
                             </div>
                             <div>
                                 <div>Chu kỳ Thách thức:</div>
-                                <div>${content[25].number}-${content[26].number}-${content[27].number}-${content[28].number}</div>
+                                <div>${content[25].number}-${
+				content[26].number
+			}-${content[27].number}-${content[28].number}</div>
                             </div>
                             <div>
                                 <div>Số của năm 21-22-23:</div>
-                                <div>${content[29].number}-${content[30].number}-${content[31].number}</div>
+                                <div>${content[29].number}-${
+				content[30].number
+			}-${content[31].number}</div>
                             </div>
                         </div>                   
                     </div>
@@ -503,7 +536,9 @@ bạn. Khi bạn bước lên cây cầu, bạn tiến tới việc tiết lộ 
 làm cho mối quan hệ giữa số Đường đời và số Sứ mệnh của mình thuận lợi hơn và tương thích
 hơn.
                     </p>
-                    <h2 style="text-align: center;">Số cầu nối: ${content[3].number}</h2>
+                    <h2 style="text-align: center;">Số cầu nối: ${
+											content[3].number
+										}</h2>
                     ${content[3].content}
                 </div>
                 <div>
@@ -531,7 +566,9 @@ việc hướng dẫn bạn trong suốt cuộc đời. Bạn không chỉ nhậ
 cực của bạn; bạn có thể thấy những gì bạn có thể và làm như thế nào dễ nhất để có được cuộc
 sống tốt nhất.
                 </p>
-                <h2 style="text-align: center;">NGÀY SINH: ${content[4].number}</h2>
+                <h2 style="text-align: center;">NGÀY SINH: ${
+									content[4].number
+								}</h2>
                 ${content[4].content}
                 </div>
                 <div>
@@ -599,7 +636,9 @@ giới. Số Khát tâm thể hiện bản sắc tâm hồn của bạn.
                 thật ở giữa. Đây là một cây cầu kết nối quan điểm của bạn về bản thân và hình ảnh phản chiếu của
                 bạn trong mắt người khác.
                 </p>
-                <h2 style="text-align: center;">Số cầu nối: ${content[7].number}</h2>
+                <h2 style="text-align: center;">Số cầu nối: ${
+									content[7].number
+								}</h2>
                 ${content[7].content}
                 </div>
                 <div>
@@ -616,7 +655,9 @@ giới. Số Khát tâm thể hiện bản sắc tâm hồn của bạn.
                 bạn, và bạn sống theo bản chất của nó. Theo cách này, đam mêm tiềm ẩn định hình tính cách và
                 định hướng cuộc sống của bạn.
                 </p>
-                <h2 style="text-align: center;">Đam mê tiềm ẩn: ${content[8].number}</h2>
+                <h2 style="text-align: center;">Đam mê tiềm ẩn: ${
+									content[8].number
+								}</h2>
                 ${content[8].content}
                 </div>
                 <div>
@@ -638,7 +679,9 @@ giới. Số Khát tâm thể hiện bản sắc tâm hồn của bạn.
                 Ảnh hưởng của bài học cuộc đời sẽ giảm đi nếu bạn có ít nhất một số 1 trong số các số cốt lõi
                 của mình (Đường đời, ngày sinh, sứ mệnh, khát tâm, nhân cách).
                 </p>
-                <h2 style="text-align: center;">Bài học ${content[9].number}</h2>
+                <h2 style="text-align: center;">Bài học ${
+									content[9].number
+								}</h2>
                 ${content[9].content}
                 </div>
                 <div>
@@ -656,7 +699,9 @@ giới. Số Khát tâm thể hiện bản sắc tâm hồn của bạn.
                 này cho thấy các đặc điểm mà bạn cần phát triển để phản ứng với những rắc rối bất ngờ dưới bất
                 kỳ hình thức nào.
                 </p>
-                <h2 style="text-align: center;">Tiềm thức ẩn ${content[10].number}</h2>
+                <h2 style="text-align: center;">Tiềm thức ẩn ${
+									content[10].number
+								}</h2>
                 ${content[10].content}
                 </div>
                 <div>
@@ -713,7 +758,9 @@ giới. Số Khát tâm thể hiện bản sắc tâm hồn của bạn.
                 Chữ cái cuối cùng của tên bạn cho thấy khả năng và thái độ của bạn đối với việc
                 hoàn thành các dự án mà bạn bắt đầu.
                 </p>
-                <h2 style="text-align: center;">NỀN TẢNG: ${content[13].number}</h2>
+                <h2 style="text-align: center;">NỀN TẢNG: ${
+									content[13].number
+								}</h2>
                 ${content[13].content}
                 </div>
                 <div>
@@ -747,13 +794,21 @@ giới. Số Khát tâm thể hiện bản sắc tâm hồn của bạn.
                 </p>
                 </div>
                 <div>
-                <h2 style="text-align: center;">THỂ CHẤT ${content[14].number}</h2>
+                <h2 style="text-align: center;">THỂ CHẤT ${
+									content[14].number
+								}</h2>
                 ${content[14].content}
-                <h2 style="text-align: center;">TINH THẦN ${content[15].number}</h2>
+                <h2 style="text-align: center;">TINH THẦN ${
+									content[15].number
+								}</h2>
                 ${content[15].content}
-                <h2 style="text-align: center;">CẢM XÚC ${content[16].number}</h2>
+                <h2 style="text-align: center;">CẢM XÚC ${
+									content[16].number
+								}</h2>
                 ${content[16].content}
-                <h2 style="text-align: center;">TRỰC GIÁC ${content[17].number}</h2>
+                <h2 style="text-align: center;">TRỰC GIÁC ${
+									content[17].number
+								}</h2>
                 ${content[17].content}
                 </div>
                 <div>
@@ -782,17 +837,27 @@ giới. Số Khát tâm thể hiện bản sắc tâm hồn của bạn.
                 </p>                
                 <div class="number" style="margin-top: 100px">
                         <img src="file:///${projectRoot}/public/img/Capture2.PNG">
-                        <div class="value" style="left: -150px;">${content[18].number}</div>
+                        <div class="value" style="left: -150px;">${
+													content[18].number
+												}</div>
                         <div class="value">${content[19].number}</div>
-                        <div class="value" style="right: -150px;">${content[20].number}</div>
+                        <div class="value" style="right: -150px;">${
+													content[20].number
+												}</div>
                 </div>
                 </div>
                 <div>
-                <h2 style="text-align: center;">CHU KỲ 1: ${content[18].number}</h2>
+                <h2 style="text-align: center;">CHU KỲ 1: ${
+									content[18].number
+								}</h2>
                 ${content[18].content}
-                <h2 style="text-align: center;">CHU KỲ 2: ${content[19].number}</h2>
+                <h2 style="text-align: center;">CHU KỲ 2: ${
+									content[19].number
+								}</h2>
                 ${content[19].content}
-                <h2 style="text-align: center;">CHU KỲ 3: ${content[20].number}</h2>
+                <h2 style="text-align: center;">CHU KỲ 3: ${
+									content[20].number
+								}</h2>
                 ${content[20].content}
                 </div>
                 <div>
@@ -823,20 +888,34 @@ giới. Số Khát tâm thể hiện bản sắc tâm hồn của bạn.
                 </p>
                 <div class="number">
                         <img src="file:///${projectRoot}/public/img/Capture3.PNG">
-                        <div class="value" style="left: -100px; top: 240px;">${content[21].number}</div>
-                        <div class="value" style="left: 100px; top: 240px;">${content[22].number}</div>
-                        <div class="value" style="top: 210px;">${content[23].number}</div>
+                        <div class="value" style="left: -100px; top: 240px;">${
+													content[21].number
+												}</div>
+                        <div class="value" style="left: 100px; top: 240px;">${
+													content[22].number
+												}</div>
+                        <div class="value" style="top: 210px;">${
+													content[23].number
+												}</div>
                         <div class="value">${content[24].number}</div>
                 </div>
                 </div>
                 <div>
-                <h2 style="text-align: center;">ĐỈNH CAO 1: ${content[21].number}</h2>
+                <h2 style="text-align: center;">ĐỈNH CAO 1: ${
+									content[21].number
+								}</h2>
                 ${content[21].content}
-                <h2 style="text-align: center;">ĐỈNH CAO 2: ${content[22].number}</h2>
+                <h2 style="text-align: center;">ĐỈNH CAO 2: ${
+									content[22].number
+								}</h2>
                 ${content[22].content}
-                <h2 style="text-align: center;">ĐỈNH CAO 3: ${content[23].number}</h2>
+                <h2 style="text-align: center;">ĐỈNH CAO 3: ${
+									content[23].number
+								}</h2>
                 ${content[23].content}
-                <h2 style="text-align: center;">ĐỈNH CAO 4: ${content[24].number}</h2>
+                <h2 style="text-align: center;">ĐỈNH CAO 4: ${
+									content[24].number
+								}</h2>
                 ${content[24].content}
                 </div>
                 <div>
@@ -868,26 +947,42 @@ giới. Số Khát tâm thể hiện bản sắc tâm hồn của bạn.
                 </p>
                 <div class="number" style="margin-top: 50px;">
                         <img src="file:///${projectRoot}/public/img/Capture4.PNG">
-                        <div class="value" style="left: -80px; top: 8px;">${content[25].number}</div>
-                        <div class="value" style="left: 80px; top: 8px;">${content[26].number}</div>
-                        <div class="value" style="top: 30px;">${content[27].number}</div>
-                        <div class="value" style="top: 140px;">${content[28].number}</div>
+                        <div class="value" style="left: -80px; top: 8px;">${
+													content[25].number
+												}</div>
+                        <div class="value" style="left: 80px; top: 8px;">${
+													content[26].number
+												}</div>
+                        <div class="value" style="top: 30px;">${
+													content[27].number
+												}</div>
+                        <div class="value" style="top: 140px;">${
+													content[28].number
+												}</div>
                 </div>
                 </div>
                 <div>
-                <h2 style="text-align: center;">THÁCH THỨC 1: ${content[25].number}</h2>
+                <h2 style="text-align: center;">THÁCH THỨC 1: ${
+									content[25].number
+								}</h2>
                 ${content[25].content}
                 </div>
                 <div>
-                <h2 style="text-align: center;">THÁCH THỨC 2: ${content[26].number}</h2>
+                <h2 style="text-align: center;">THÁCH THỨC 2: ${
+									content[26].number
+								}</h2>
                 ${content[26].content}
                 </div>
                 <div>
-                <h2 style="text-align: center;">THÁCH THỨC 3: ${content[27].number}</h2>
+                <h2 style="text-align: center;">THÁCH THỨC 3: ${
+									content[27].number
+								}</h2>
                 ${content[27].content}
                 </div>
                 <div>
-                <h2 style="text-align: center;">THÁCH THỨC 4: ${content[28].number}</h2>
+                <h2 style="text-align: center;">THÁCH THỨC 4: ${
+									content[28].number
+								}</h2>
                 ${content[28].content}
                 </div>
                 <div>
@@ -915,41 +1010,52 @@ giới. Số Khát tâm thể hiện bản sắc tâm hồn của bạn.
                 </p>
                 </div>
                 <div>
-                    <h2 style="text-align: center;">NĂM CÁ NHÂN 2021: ${content[29].number}</h2>
+                    <h2 style="text-align: center;">NĂM CÁ NHÂN 2021: ${
+											content[29].number
+										}</h2>
                     ${content[29].content}
                 </div>
                 <div>
-                    <h2 style="text-align: center;">NĂM CÁ NHÂN 2022: ${content[30].number}</h2>
+                    <h2 style="text-align: center;">NĂM CÁ NHÂN 2022: ${
+											content[30].number
+										}</h2>
                     ${content[30].content}
                 </div>
                 <div>
-                    <h2 style="text-align: center;">NĂM CÁ NHÂN 2023: ${content[31].number}</h2>
+                    <h2 style="text-align: center;">NĂM CÁ NHÂN 2023: ${
+											content[31].number
+										}</h2>
                     ${content[31].content}
                 </div>   
     </body>
 </html>
 
-    `, options).toBuffer(async (err, buffer) => {
-        pdfmain = buffer;
-        if (pdfmain && pdfcover) {
-            const merged = await merge([pdfcover, pdfmain]);
-            const report = new Report({
-                name: req.body.name,
-                sex: req.body.sex,
-                birthday: req.body.birthday,
-                userId: req.user.id,
-                content: merged
-            });
-            try {
-                const savedReport = await report.save();
-                res.send('Thành công');
-            } catch (err) {
-                res.status(400).send(err);
-            }
-        }
-    });
+    `,
+			options
+		)
+		.toBuffer(async (err, buffer) => {
+			pdfmain = buffer;
+			if (pdfmain && pdfcover) {
+				const merged = await merge([pdfcover, pdfmain]);
+				const report = new Report({
+					name: req.body.name,
+					sex: req.body.sex,
+					birthday: req.body.birthday,
+					userId: req.user.id,
+					content: merged,
+				});
+				try {
+					const savedReport = await report.save();
+					res.send('Thành công');
+				} catch (err) {
+					res.status(400).send(err);
+				}
+			}
+		});
 
-    pdf.create(`
+	pdf
+		.create(
+			`
         <html>
             <body style="margin: 0;">
                 <div id="bia" style="position: relative; padding: 0;">
@@ -958,90 +1064,131 @@ giới. Số Khát tâm thể hiện bản sắc tâm hồn của bạn.
                 </div>
             </body>
         </html>
-        `, ).toBuffer(async (err, buffer) => {
-            pdfcover = buffer;
-            if (pdfmain && pdfcover) {
-                const merged = await merge([pdfcover, pdfmain]);
-                const report = new Report({
-                    name: req.body.name,
-                    sex: req.body.sex,
-                    birthday: req.body.birthday,
-                    userId: req.user.id,
-                    content: merged
-                });
-                try {
-                    const savedReport = await report.save();
-                    res.send('Thành công');
-                } catch (err) {
-                    res.status(400).send(err);
-                }
-            }
-        });
-
-	
+        `
+		)
+		.toBuffer(async (err, buffer) => {
+			pdfcover = buffer;
+			if (pdfmain && pdfcover) {
+				const merged = await merge([pdfcover, pdfmain]);
+				const report = new Report({
+					name: req.body.name,
+					sex: req.body.sex,
+					birthday: req.body.birthday,
+					userId: req.user.id,
+					content: merged,
+				});
+				try {
+					const savedReport = await report.save();
+					res.send('Thành công');
+				} catch (err) {
+					res.status(400).send(err);
+				}
+			}
+		});
 });
 
 router.get('/', authentication, async (req, res) => {
-	//Get all and search report list 
+	//Get all and search report list
 	let { page, field, keyword, limit } = req.query;
 	page = parseInt(page);
 	limit = parseInt(limit);
-    const skip = limit * page; //page start with 0
-    
-    const { isAdmin } = await User.findById(req.user.id);
+	const skip = limit * page; //page start with 0
+
+	const { isAdmin } = await User.findById(req.user.id);
 
 	let reports = {};
 	let countDocs;
-    let data;
-    
-	try {        
-        if (isAdmin) {
-			if ( field && keyword ) {
+	let data;
+
+	try {
+		if (isAdmin) {
+			if (field && keyword) {
 				if (field == 'name') {
-					data = await Report.find({ name: { $regex: keyword }  }, null, { skip, limit });
-					countDocs = await Report.countDocuments({ name: { $regex: keyword } });
+					data = await Report.find({ name: { $regex: keyword } }, null, {
+						skip,
+						limit,
+					});
+					countDocs = await Report.countDocuments({
+						name: { $regex: keyword },
+					});
 				} else if (field == 'birthday') {
 					let birthday = new Date(keyword);
-					data = await Report.find({ birthday: {$gte: keyword, $lt: new Date(birthday.getTime() + 86400000)} }, null, { skip, limit });
+					data = await Report.find(
+						{
+							birthday: {
+								$gte: keyword,
+								$lt: new Date(birthday.getTime() + 86400000),
+							},
+						},
+						null,
+						{ skip, limit }
+					);
 				} else {
 					data = await Report.find({ [field]: keyword }, null, { skip, limit });
 					countDocs = await Report.countDocuments({ [field]: keyword });
-				}				
+				}
 			} else {
 				data = await Report.find(null, null, { skip, limit });
 				countDocs = await Report.countDocuments();
 			}
-        } else {
-			if ( field && keyword ) {
+		} else {
+			if (field && keyword) {
 				if (field == 'name') {
-					data = await Report.find({ userId: req.user.id, name: { $regex: keyword }  }, null, { skip, limit });
-					countDocs = await Report.countDocuments({ userId: req.user.id, name: { $regex: keyword } });
+					data = await Report.find(
+						{ userId: req.user.id, name: { $regex: keyword } },
+						null,
+						{ skip, limit }
+					);
+					countDocs = await Report.countDocuments({
+						userId: req.user.id,
+						name: { $regex: keyword },
+					});
 				} else if (field == 'birthday') {
 					let birthday = new Date(keyword);
-					data = await Report.find({ userId: req.user.id, birthday: {$gte: keyword, $lt: new Date(birthday.getTime() + 86400000)} }, null, { skip, limit });
+					data = await Report.find(
+						{
+							userId: req.user.id,
+							birthday: {
+								$gte: keyword,
+								$lt: new Date(birthday.getTime() + 86400000),
+							},
+						},
+						null,
+						{ skip, limit }
+					);
 				} else {
-					data = await Report.find({ userId: req.user.id, [field]: keyword }, null, { skip, limit });
-					countDocs = await Report.countDocuments({ userId: req.user.id, [field]: keyword });
-				}				
+					data = await Report.find(
+						{ userId: req.user.id, [field]: keyword },
+						null,
+						{ skip, limit }
+					);
+					countDocs = await Report.countDocuments({
+						userId: req.user.id,
+						[field]: keyword,
+					});
+				}
 			} else {
-				data = await Report.find({ userId: req.user.id }, null, { skip, limit });			
-				countDocs = await Report.countDocuments({ userId: req.user.id });	
-			}		
-        }	
-        
-        let finalData = [];
-        data.map((item) => {
-            finalData.push({
-                _id: item._id,
-                name: item.name,
-                sex: item.sex,
-                birthday: item.birthday,
-                date: item.date
-            })
-        })
-        
-        reports.data = finalData;
-		reports.countPages = Math.ceil(countDocs/limit);
+				data = await Report.find({ userId: req.user.id }, null, {
+					skip,
+					limit,
+				});
+				countDocs = await Report.countDocuments({ userId: req.user.id });
+			}
+		}
+
+		let finalData = [];
+		data.map((item) => {
+			finalData.push({
+				_id: item._id,
+				name: item.name,
+				sex: item.sex,
+				birthday: item.birthday,
+				date: item.date,
+			});
+		});
+
+		reports.data = finalData;
+		reports.countPages = Math.ceil(countDocs / limit);
 		res.status(200).send(reports);
 	} catch (err) {
 		res.status(404).send(err);
@@ -1050,46 +1197,46 @@ router.get('/', authentication, async (req, res) => {
 
 router.delete('/', (req, res) => {
 	const { _id } = req.body;
-    Report.findOneAndDelete({ _id })
-		.then(item => res.status(200).json(item))
-		.catch(err => res.status(404).json(err));
+	Report.findOneAndDelete({ _id })
+		.then((item) => res.status(200).json(item))
+		.catch((err) => res.status(404).json(err));
 });
 
-router.get('/statistic',authentication, async (req, res) => {
+router.get('/statistic', authentication, async (req, res) => {
 	const { isAdmin } = await User.findById(req.user.id);
 
 	Report.aggregate(
 		[
 			{
-				$match: isAdmin?{}:{ userId: req.user.id }
+				$match: isAdmin ? {} : { userId: req.user.id },
 			},
 			{
 				$project: {
-					year: { $year: "$date" },
-					month: { $month: "$date" }
-				}
+					year: { $year: '$date' },
+					month: { $month: '$date' },
+				},
 			},
 			{
 				$group: {
 					_id: {
-						month: "$month",
-                		year: "$year"
+						month: '$month',
+						year: '$year',
 					},
-					total: { $sum: 1 }
-				}
+					total: { $sum: 1 },
+				},
 			},
 			{
 				$project: {
 					_id: 0,
-					month: "$_id.month",
-					year: "$_id.year",
-					total: "$total"
-				}
-			}
-	  	],  
-	  	function(err, result) {
+					month: '$_id.month',
+					year: '$_id.year',
+					total: '$total',
+				},
+			},
+		],
+		function (err, result) {
 			if (err) {
-			res.send(err);
+				res.send(err);
 			} else {
 				let data = {};
 				result.map((item) => {
@@ -1111,90 +1258,108 @@ router.get('/statistic',authentication, async (req, res) => {
 				}
 				res.json(data);
 			}
-	  	})
+		}
+	);
 });
 
 router.get('/:id', async (req, res) => {
-    const reportId = req.params.id;
-    const data = await Report.findById(reportId);    
+	const reportId = req.params.id;
+	const data = await Report.findById(reportId);
 
-    res.set('Content-Type', 'application/pdf')
-    res.end(data.content, 'binary');
+	res.set('Content-Type', 'application/pdf');
+	res.end(data.content, 'binary');
 });
 
 function nameToNumber(str) {
-    str = str.toLocaleUpperCase();
-    str = removeVietnameseTones(str);
-    let arr = [];
-    let numb;
-    for (let i = 0; i < str.length; i++) {
-        numb = str.charCodeAt(i) - 64;
-        if (numb > 9 && numb < 19) arr.push(numb - 9);
-        if (numb >= 19) arr.push(numb - 18);
-        if (numb > 0 && numb <= 9) arr.push(numb);
-    }
-    return arr;
+	str = str.toLocaleUpperCase();
+	str = removeVietnameseTones(str);
+	let arr = [];
+	let numb;
+	for (let i = 0; i < str.length; i++) {
+		numb = str.charCodeAt(i) - 64;
+		if (numb > 9 && numb < 19) arr.push(numb - 9);
+		if (numb >= 19) arr.push(numb - 18);
+		if (numb > 0 && numb <= 9) arr.push(numb);
+	}
+	return arr;
 }
 
 function nameToNumberHtml(str) {
-    str = str.toLocaleUpperCase();
-    str = removeVietnameseTones(str);
-    let arr = [];
-    let numb;
-    for (let i = 0; i < str.length; i++) {
-        numb = str.charCodeAt(i) - 64;
-        if (numb > 9 && numb < 19) numb = numb - 9;
-        if (numb >= 19) numb = numb - 18;
-        if (numb < 0) numb = 0;
+	str = str.toLocaleUpperCase();
+	str = removeVietnameseTones(str);
+	let arr = [];
+	let numb;
+	for (let i = 0; i < str.length; i++) {
+		numb = str.charCodeAt(i) - 64;
+		if (numb > 9 && numb < 19) numb = numb - 9;
+		if (numb >= 19) numb = numb - 18;
+		if (numb < 0) numb = 0;
 
-        if (numb === 0) arr.push('<div class="space"></div>')
-        else arr.push(`<div><div>${str[i]}</div><div style="background-color: ${getColor(numb)};">${numb}</div></div>`);
-    }
+		if (numb === 0) arr.push('<div class="space"></div>');
+		else
+			arr.push(
+				`<div><div>${str[i]}</div><div style="background-color: ${getColor(
+					numb
+				)};">${numb}</div></div>`
+			);
+	}
 
-    return arr.join('');
+	return arr.join('');
 }
 
 function getColor(number) {
-    switch(number) {
-        case 1: return '#FF0000';
-        case 2: return '#F17E0B';
-        case 3: return '#FFFF00';
-        case 4: return '#9FD319';
-        case 5: return '#00B0F0';
-        case 6: return '#0070C0';
-        case 7: return '#AD5AC4';
-        case 8: return '#EB567E';
-        case 9: return '#109611';
-    }
+	switch (number) {
+		case 1:
+			return '#FF0000';
+		case 2:
+			return '#F17E0B';
+		case 3:
+			return '#FFFF00';
+		case 4:
+			return '#9FD319';
+		case 5:
+			return '#00B0F0';
+		case 6:
+			return '#0070C0';
+		case 7:
+			return '#AD5AC4';
+		case 8:
+			return '#EB567E';
+		case 9:
+			return '#109611';
+	}
 }
 
 function removeVietnameseTones(str) {
-    str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g,"a"); 
-    str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g,"e"); 
-    str = str.replace(/ì|í|ị|ỉ|ĩ/g,"i"); 
-    str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g,"o"); 
-    str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g,"u"); 
-    str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g,"y"); 
-    str = str.replace(/đ/g,"d");
-    str = str.replace(/À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ/g, "A");
-    str = str.replace(/È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ/g, "E");
-    str = str.replace(/Ì|Í|Ị|Ỉ|Ĩ/g, "I");
-    str = str.replace(/Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ/g, "O");
-    str = str.replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, "U");
-    str = str.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, "Y");
-    str = str.replace(/Đ/g, "D");
-    // Some system encode vietnamese combining accent as individual utf-8 characters
-    // Một vài bộ encode coi các dấu mũ, dấu chữ như một kí tự riêng biệt nên thêm hai dòng này
-    str = str.replace(/\u0300|\u0301|\u0303|\u0309|\u0323/g, ""); // ̀ ́ ̃ ̉ ̣  huyền, sắc, ngã, hỏi, nặng
-    str = str.replace(/\u02C6|\u0306|\u031B/g, ""); // ˆ ̆ ̛  Â, Ê, Ă, Ơ, Ư
-    // Remove extra spaces
-    // Bỏ các khoảng trắng liền nhau
-    str = str.replace(/ + /g," ");
-    str = str.trim();
-    // Remove punctuations
-    // Bỏ dấu câu, kí tự đặc biệt
-    str = str.replace(/!|@|%|\^|\*|\(|\)|\+|\=|\<|\>|\?|\/|,|\.|\:|\;|\'|\"|\&|\#|\[|\]|~|\$|_|`|-|{|}|\||\\/g," ");
-    return str;
+	str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, 'a');
+	str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, 'e');
+	str = str.replace(/ì|í|ị|ỉ|ĩ/g, 'i');
+	str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, 'o');
+	str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, 'u');
+	str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, 'y');
+	str = str.replace(/đ/g, 'd');
+	str = str.replace(/À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ/g, 'A');
+	str = str.replace(/È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ/g, 'E');
+	str = str.replace(/Ì|Í|Ị|Ỉ|Ĩ/g, 'I');
+	str = str.replace(/Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ/g, 'O');
+	str = str.replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, 'U');
+	str = str.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, 'Y');
+	str = str.replace(/Đ/g, 'D');
+	// Some system encode vietnamese combining accent as individual utf-8 characters
+	// Một vài bộ encode coi các dấu mũ, dấu chữ như một kí tự riêng biệt nên thêm hai dòng này
+	str = str.replace(/\u0300|\u0301|\u0303|\u0309|\u0323/g, ''); // ̀ ́ ̃ ̉ ̣  huyền, sắc, ngã, hỏi, nặng
+	str = str.replace(/\u02C6|\u0306|\u031B/g, ''); // ˆ ̆ ̛  Â, Ê, Ă, Ơ, Ư
+	// Remove extra spaces
+	// Bỏ các khoảng trắng liền nhau
+	str = str.replace(/ + /g, ' ');
+	str = str.trim();
+	// Remove punctuations
+	// Bỏ dấu câu, kí tự đặc biệt
+	str = str.replace(
+		/!|@|%|\^|\*|\(|\)|\+|\=|\<|\>|\?|\/|,|\.|\:|\;|\'|\"|\&|\#|\[|\]|~|\$|_|`|-|{|}|\||\\/g,
+		' '
+	);
+	return str;
 }
 
 module.exports = router;
