@@ -32,7 +32,6 @@ app.use(passport.session());
 const userRoute = require('./routes/user');
 const reportRoute = require('./routes/report');
 const contentRoute = require('./routes/content');
-const importantRoute = require('./routes/importantData');
 const authRoute = require('./routes/auth');
 
 const corsOptions = {
@@ -55,7 +54,6 @@ app.use(cors(corsOptions));
 app.use('/api/user', userRoute);
 app.use('/api/report', reportRoute);
 app.use('/api/content', contentRoute);
-app.use('/important', importantRoute);
 app.use('/api/auth', authRoute);
 
 app.get('/*', function (req, res) {
