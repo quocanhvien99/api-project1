@@ -9,7 +9,6 @@ const passportSetup = require('./passport-setup');
 const cookieSession = require('cookie-session');
 const path = require('path');
 
-//app.use(express.static('public'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(
