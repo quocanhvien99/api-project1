@@ -96,6 +96,7 @@ router.post('/', authentication, async (req, res) => {
     <html>
     <head>
         <style>
+            html{zoom: 0.7;}
             body {
                 margin: 0;
                 font-family: sans-serif;
@@ -1056,7 +1057,7 @@ giới. Số Khát tâm thể hiện bản sắc tâm hồn của bạn.
 	pdf
 		.create(
 			`
-        <html>
+        <html style="zoom: 0.7;">
             <body style="margin: 0;">
                 <div id="bia" style="position: relative; padding: 0;">
                     <img style="width:8.27in;height:11.69in;" src="file:///${projectRoot}/public/img/cover.png">
