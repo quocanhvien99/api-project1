@@ -1057,7 +1057,7 @@ giới. Số Khát tâm thể hiện bản sắc tâm hồn của bạn.
 	pdf
 		.create(
 			`
-        <html style="zoom: 1.0;">
+        <html style="zoom: 0.9;">
             <body style="margin: 0;">
                 <div id="bia" style="position: relative; padding: 0;">
                     <img style="width:8.27in;height:11.69in;" src="file:///${projectRoot}/public/img/cover.png">
