@@ -1057,10 +1057,10 @@ giới. Số Khát tâm thể hiện bản sắc tâm hồn của bạn.
 	pdf
 		.create(
 			`
-        <html style="zoom: 0.9;">
+        <html >
             <body style="margin: 0;">
                 <div id="bia" style="position: relative; padding: 0;">
-                    <img style="width:8.27in;height:11.69in;" src="file:///${projectRoot}/public/img/cover.png">
+                    <img style="width:100%;height:auto;" src="file:///${projectRoot}/public/img/cover.png">
                     <div style="position: absolute; bottom: 1.3in; width: 100%;text-align: center;"><span style="font-size:24pt;color:#fff;text-transform: uppercase;">${name} ${birthday}</span></div>
                 </div>
             </body>
