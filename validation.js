@@ -41,7 +41,7 @@ const reportValidation = (data) => {
 const contentValidation = (data) => {
 	const schema = Joi.object({
 		content: Joi.string().required(),
-		key: Joi.string().required(),
+		key: Joi.number().required(),
 		number: Joi.number().required(),
 	});
 	return schema.validate(data);
