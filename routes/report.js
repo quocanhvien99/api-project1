@@ -5,6 +5,7 @@ const authentication = require('../authentication');
 const Report = require('../models/Report');
 const User = require('../models/User');
 const Content = require('../models/Content');
+const dictKey = require('../dictKey');
 
 const { reportValidation } = require('../validation');
 
@@ -20,49 +21,40 @@ router.post('/', authentication, async (req, res) => {
 		arr.push(numbFromName[c++]);
 		if (c > numbFromName.length - 1) c = 0;
 	}
-	let temp = await Promise.all([
-		Content.find({ key: 'ĐƯỜNG ĐỜI', number: arr[0] }),
-		Content.find({ key: 'SỨ MỆNH', number: arr[1] }),
-		Content.find({ key: 'TRƯỞNG THÀNH', number: arr[2] }),
-		Content.find({ key: 'CẦU NỐI ĐƯỜNG ĐỜI/SỨ MỆNH', number: arr[3] }),
-		Content.find({ key: 'SỐ NGÀY SINH', number: arr[4] }),
-		Content.find({ key: 'KHÁT TÂM', number: arr[5] }),
-		Content.find({ key: 'NHÂN CÁCH', number: arr[6] }),
-		Content.find({ key: 'CẦU NỐI KHÁT TÂM/NHÂN CÁCH', number: arr[7] }),
-		Content.find({ key: 'ĐAM MÊ TIỀM ẨN', number: arr[8] }),
-		Content.find({ key: 'BÀI HỌC CUỘC SỐNG', number: arr[9] }),
-		Content.find({ key: 'TIỀM THỨC ẨN', number: arr[10] }),
-		Content.find({ key: 'SỐ SUY NGHĨ HỢP LÝ', number: arr[11] }),
-		Content.find({ key: 'SỐ CÂN BẰNG', number: arr[12] }),
-		Content.find({ key: 'NỀN TẢNG', number: arr[13] }),
-		Content.find({ key: 'THỂ CHẤT', number: arr[14] }),
-		Content.find({ key: 'TINH THẦN', number: arr[15] }),
-		Content.find({ key: 'CẢM XÚC', number: arr[16] }),
-		Content.find({ key: 'TRỰC GIÁC', number: arr[17] }),
-		Content.find({ key: 'CHU KỲ 1', number: arr[18] }),
-		Content.find({ key: 'CHU KỲ 2', number: arr[19] }),
-		Content.find({ key: 'CHU KỲ 3', number: arr[20] }),
-		Content.find({ key: 'ĐỈNH CAO 1', number: arr[21] }),
-		Content.find({ key: 'ĐỈNH CAO 2', number: arr[22] }),
-		Content.find({ key: 'ĐỈNH CAO 3', number: arr[23] }),
-		Content.find({ key: 'ĐỈNH CAO 4', number: arr[24] }),
-		Content.find({ key: 'THÁCH THỨC 1', number: arr[25] }),
-		Content.find({ key: 'THÁCH THỨC 2', number: arr[26] }),
-		Content.find({ key: 'THÁCH THỨC 3', number: arr[27] }),
-		Content.find({ key: 'THÁCH THỨC 4', number: arr[28] }),
-		Content.find({ key: 'NĂM CÁ NHÂN 2021', number: arr[29] }),
-		Content.find({ key: 'NĂM CÁ NHÂN 2022', number: arr[30] }),
-		Content.find({ key: 'NĂM CÁ NHÂN 2023', number: arr[31] }),
+	let content = await Promise.all([
+		Content.findOne({ key: dictKey[0].key, number: arr[0] }),
+		Content.findOne({ key: dictKey[1].key, number: arr[1] }),
+		Content.findOne({ key: dictKey[2].key, number: arr[2] }),
+		Content.findOne({ key: dictKey[3].key, number: arr[3] }),
+		Content.findOne({ key: dictKey[4].key, number: arr[4] }),
+		Content.findOne({ key: dictKey[5].key, number: arr[5] }),
+		Content.findOne({ key: dictKey[6].key, number: arr[6] }),
+		Content.findOne({ key: dictKey[7].key, number: arr[7] }),
+		Content.findOne({ key: dictKey[8].key, number: arr[8] }),
+		Content.findOne({ key: dictKey[9].key, number: arr[9] }),
+		Content.findOne({ key: dictKey[10].key, number: arr[10] }),
+		Content.findOne({ key: dictKey[11].key, number: arr[11] }),
+		Content.findOne({ key: dictKey[12].key, number: arr[12] }),
+		Content.findOne({ key: dictKey[13].key, number: arr[13] }),
+		Content.findOne({ key: dictKey[14].key, number: arr[14] }),
+		Content.findOne({ key: dictKey[15].key, number: arr[15] }),
+		Content.findOne({ key: dictKey[16].key, number: arr[16] }),
+		Content.findOne({ key: dictKey[17].key, number: arr[17] }),
+		Content.findOne({ key: dictKey[18].key, number: arr[18] }),
+		Content.findOne({ key: dictKey[19].key, number: arr[19] }),
+		Content.findOne({ key: dictKey[20].key, number: arr[20] }),
+		Content.findOne({ key: dictKey[21].key, number: arr[21] }),
+		Content.findOne({ key: dictKey[22].key, number: arr[22] }),
+		Content.findOne({ key: dictKey[23].key, number: arr[23] }),
+		Content.findOne({ key: dictKey[24].key, number: arr[24] }),
+		Content.findOne({ key: dictKey[25].key, number: arr[25] }),
+		Content.findOne({ key: dictKey[26].key, number: arr[26] }),
+		Content.findOne({ key: dictKey[27].key, number: arr[27] }),
+		Content.findOne({ key: dictKey[28].key, number: arr[28] }),
+		Content.findOne({ key: dictKey[29].key, number: arr[29] }),
+		Content.findOne({ key: dictKey[30].key, number: arr[30] }),
+		Content.findOne({ key: dictKey[31].key, number: arr[31] }),
 	]);
-	let content = [];
-
-	temp.map((item) => {
-		content.push({
-			content: item[0].content,
-			number: item[0].number,
-			key: item[0].key,
-		});
-	});
 
 	const formatDate = (birthday) => {
 		birthday = new Date(birthday);
@@ -83,9 +75,9 @@ router.post('/', authentication, async (req, res) => {
 	const options = {
 		format: 'A4',
 		border: {
-			top: '0.8in', // default is 0, units: mm, cm, in, px
+			top: '0in', // default is 0, units: mm, cm, in, px
 			right: '0.8in',
-			bottom: '0.8in',
+			bottom: '0in',
 			left: '0.8in',
 		},
 	};
@@ -96,7 +88,7 @@ router.post('/', authentication, async (req, res) => {
     <html>
     <head>
         <style>
-            html{zoom: 0.7;}
+            html{zoom: ${process.env.SERVER_OS == 'linux' ? 0.7 : 1.0};}
             body {
                 margin: 0;
                 font-family: sans-serif;
@@ -182,7 +174,8 @@ router.post('/', authentication, async (req, res) => {
                 overflow: hidden;
                 text-align: right;
                 font-weight: bold;
-            }        
+            }            
+
         </style>
     </head>
 
@@ -1037,20 +1030,8 @@ giới. Số Khát tâm thể hiện bản sắc tâm hồn của bạn.
 		.toBuffer(async (err, buffer) => {
 			pdfmain = buffer;
 			if (pdfmain && pdfcover) {
-				const merged = await merge([pdfcover, pdfmain]);
-				const report = new Report({
-					name: req.body.name,
-					sex: req.body.sex,
-					birthday: req.body.birthday,
-					userId: req.user.id,
-					content: merged,
-				});
-				try {
-					const savedReport = await report.save();
-					res.send('Thành công');
-				} catch (err) {
-					res.status(400).send(err);
-				}
+				const result = await mergePageAndSave(pdfcover, pdfmain, req);
+				res.status(result.code).send(result.message);
 			}
 		});
 
@@ -1070,20 +1051,8 @@ giới. Số Khát tâm thể hiện bản sắc tâm hồn của bạn.
 		.toBuffer(async (err, buffer) => {
 			pdfcover = buffer;
 			if (pdfmain && pdfcover) {
-				const merged = await merge([pdfcover, pdfmain]);
-				const report = new Report({
-					name: req.body.name,
-					sex: req.body.sex,
-					birthday: req.body.birthday,
-					userId: req.user.id,
-					content: merged,
-				});
-				try {
-					const savedReport = await report.save();
-					res.send('Thành công');
-				} catch (err) {
-					res.status(400).send(err);
-				}
+				const result = await mergePageAndSave(pdfcover, pdfmain, req);
+				res.status(result.code).send(result.message);
 			}
 		});
 });
@@ -1108,7 +1077,7 @@ router.get('/', authentication, async (req, res) => {
 					data = await Report.find({ name: { $regex: keyword } }, null, {
 						skip,
 						limit,
-					});
+					}).sort({ date: -1 });
 					countDocs = await Report.countDocuments({
 						name: { $regex: keyword },
 					});
@@ -1123,13 +1092,18 @@ router.get('/', authentication, async (req, res) => {
 						},
 						null,
 						{ skip, limit }
-					);
+					).sort({ date: -1 });
 				} else {
-					data = await Report.find({ [field]: keyword }, null, { skip, limit });
+					data = await Report.find({ [field]: keyword }, null, {
+						skip,
+						limit,
+					}).sort({ date: -1 });
 					countDocs = await Report.countDocuments({ [field]: keyword });
 				}
 			} else {
-				data = await Report.find(null, null, { skip, limit });
+				data = await Report.find(null, null, { skip, limit }).sort({
+					date: -1,
+				});
 				countDocs = await Report.countDocuments();
 			}
 		} else {
@@ -1139,7 +1113,7 @@ router.get('/', authentication, async (req, res) => {
 						{ userId: req.user.id, name: { $regex: keyword } },
 						null,
 						{ skip, limit }
-					);
+					).sort({ date: -1 });
 					countDocs = await Report.countDocuments({
 						userId: req.user.id,
 						name: { $regex: keyword },
@@ -1156,13 +1130,13 @@ router.get('/', authentication, async (req, res) => {
 						},
 						null,
 						{ skip, limit }
-					);
+					).sort({ date: -1 });
 				} else {
 					data = await Report.find(
 						{ userId: req.user.id, [field]: keyword },
 						null,
 						{ skip, limit }
-					);
+					).sort({ date: -1 });
 					countDocs = await Report.countDocuments({
 						userId: req.user.id,
 						[field]: keyword,
@@ -1172,7 +1146,7 @@ router.get('/', authentication, async (req, res) => {
 				data = await Report.find({ userId: req.user.id }, null, {
 					skip,
 					limit,
-				});
+				}).sort({ date: -1 });
 				countDocs = await Report.countDocuments({ userId: req.user.id });
 			}
 		}
@@ -1270,6 +1244,23 @@ router.get('/:id', async (req, res) => {
 	res.set('Content-Type', 'application/pdf');
 	res.end(data.content, 'binary');
 });
+
+async function mergePageAndSave(pdfcover, pdfmain, req) {
+	const merged = await merge([pdfcover, pdfmain]);
+	const report = new Report({
+		name: req.body.name,
+		sex: req.body.sex,
+		birthday: req.body.birthday,
+		userId: req.user.id,
+		content: merged,
+	});
+	try {
+		const savedReport = await report.save();
+		return { message: 'Thành công.', code: 200 };
+	} catch (err) {
+		return { message: 'Không thành công', code: 400 };
+	}
+}
 
 function nameToNumber(str) {
 	str = str.toLocaleUpperCase();

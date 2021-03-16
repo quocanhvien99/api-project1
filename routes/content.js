@@ -51,7 +51,7 @@ router.delete('/', authentication, adminAuth, (req, res) => {
 });
 
 router.get('/', authentication, adminAuth, async (req, res) => {
-	let { page, limit, keyword } = req.query;
+	let { page, limit, key } = req.query;
 	page = parseInt(page);
 	limit = parseInt(limit);
 	const skip = limit * page; //page start with 0
@@ -60,11 +60,11 @@ router.get('/', authentication, adminAuth, async (req, res) => {
 	let countDocs;
 
 	try {
-		content.data = await Content.find({ key: { $regex: keyword } }, null, {
+		content.data = await Content.find({ key }, null, {
 			skip,
 			limit,
 		});
-		countDocs = await Content.countDocuments({ key: { $regex: keyword } });
+		countDocs = await Content.countDocuments({ key });
 		content.countPages = Math.ceil(countDocs / limit);
 		res.status(200).send(content);
 	} catch (err) {

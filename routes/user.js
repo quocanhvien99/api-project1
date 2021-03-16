@@ -4,10 +4,7 @@ const User = require('../models/User');
 const authentication = require('../authentication');
 const adminAuth = require('../adminAuth');
 
-const {
-	registerValidation,
-	passwordValidation
-} = require('../validation');
+const { registerValidation, passwordValidation } = require('../validation');
 
 router.post('/register', async (req, res) => {
 	//Validate data
@@ -25,7 +22,7 @@ router.post('/register', async (req, res) => {
 	const user = new User({
 		name: req.body.name,
 		email: req.body.email,
-		password: hashedPassword
+		password: hashedPassword,
 	});
 	try {
 		const savedUser = await user.save();
@@ -58,8 +55,8 @@ router.put('/change', authentication, async (req, res) => {
 router.delete('/delete', authentication, adminAuth, (req, res) => {
 	const { _id } = req.body;
 	User.findOneAndDelete({ _id })
-		.then(user => res.status(200).json(user))
-		.catch(err => res.status(404).json(err));
+		.then((user) => res.status(200).json(user))
+		.catch((err) => res.status(404).json(err));
 });
 
 router.get('/info', authentication, async (req, res) => {
@@ -68,18 +65,20 @@ router.get('/info', authentication, async (req, res) => {
 });
 
 router.get('/list', authentication, adminAuth, async (req, res) => {
-    let { page, limit } = req.query;
+	let { page, limit } = req.query;
 	page = parseInt(page);
 	limit = parseInt(limit);
 	const skip = limit * page; //page start with 0
 
-	let users = {}
+	let users = {};
 	let countDocs;
 
 	try {
-		users.data = await User.find(null, null, { skip, limit });
+		users.data = await User.find(null, null, { skip, limit }).sort({
+			date: -1,
+		});
 		countDocs = await User.countDocuments();
-		users.countPages = Math.ceil(countDocs/limit);
+		users.countPages = Math.ceil(countDocs / limit);
 		res.status(200).send(users);
 	} catch (err) {
 		res.status(404).send(err);

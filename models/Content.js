@@ -9,7 +9,7 @@ const contentSchema = new mongoose.Schema({
 		require: true,
 	},
 	key: {
-		type: String,
+		type: Number,
 		require: true,
 	},
 	date: {
