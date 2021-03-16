@@ -75,9 +75,9 @@ router.post('/', authentication, async (req, res) => {
 	const options = {
 		format: 'A4',
 		border: {
-			top: '0in', // default is 0, units: mm, cm, in, px
+			top: '0.8in', // default is 0, units: mm, cm, in, px
 			right: '0.8in',
-			bottom: '0in',
+			bottom: '0.8in',
 			left: '0.8in',
 		},
 	};
