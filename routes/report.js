@@ -1042,7 +1042,9 @@ giới. Số Khát tâm thể hiện bản sắc tâm hồn của bạn.
             <body style="margin: 0;">
                 <div id="bia" style="position: relative; padding: 0;">
                     <img style="width:100%;height:auto;" src="file:///${projectRoot}/public/img/cover.png">
-                    <div style="position: absolute; bottom: 1.3in; width: 100%;text-align: center;"><span style="font-size:24pt;color:#fff;text-transform: uppercase;">${name} ${birthday}</span></div>
+                    <div style="position: absolute; bottom: ${
+											process.env.SERVER_OS == 'linux' ? '1.0in' : '1.3in'
+										}; width: 100%;text-align: center;"><span style="font-size:24pt;color:#fff;text-transform: uppercase;">${name} ${birthday}</span></div>
                 </div>
             </body>
         </html>
