@@ -63,7 +63,7 @@ router.get('/', authentication, adminAuth, async (req, res) => {
 		content.data = await Content.find({ key }, null, {
 			skip,
 			limit,
-		});
+		}).sort({ number: 1 });
 		countDocs = await Content.countDocuments({ key });
 		content.countPages = Math.ceil(countDocs / limit);
 		res.status(200).send(content);
