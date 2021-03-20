@@ -40,24 +40,28 @@ const numberToDigits = (num) => {
 	const digits = num.toString().split('');
 	return digits.map(Number);
 };
-const shortenNumber = (num) => {
-	if (num == 22 || num == 11 || num == 33 || num < 10) return num;
+const shortenNumber = (num, arr = []) => {
+	arr.push(num);
+	if (num == 22 || num == 11 || num == 33 || num < 10) return arr;
 
 	let numArr = numberToDigits(num);
 	return shortenNumber(
 		numArr.reduce((a, b) => {
 			return a + b;
-		})
+		}),
+		arr
 	);
 };
-const shortenNumber1 = (num) => {
-	if (num < 10) return num;
+const shortenNumber1 = (num, arr = []) => {
+	arr.push(num);
+	if (num < 10) return arr;
 
 	let numArr = numberToDigits(num);
 	return shortenNumber1(
 		numArr.reduce((a, b) => {
 			return a + b;
-		})
+		}),
+		arr
 	);
 };
 const tachten = (name) => {
@@ -162,9 +166,9 @@ const numberChar = {
 
 const duongdoi = (date) => {
 	//truyen vao date da format
-	const day = shortenNumber(date.day);
-	const month = shortenNumber(date.month);
-	const year = shortenNumber(date.year);
+	const day = shortenNumber(date.day).slice(-1)[0];
+	const month = shortenNumber(date.month).slice(-1)[0];
+	const year = shortenNumber(date.year).slice(-1)[0];
 	return shortenNumber(day + month + year);
 };
 
@@ -188,9 +192,9 @@ const sumenh = (name) => {
 		tendemNumb += numberChar[tendem[i]];
 	}
 
-	hoNumb = shortenNumber(hoNumb);
-	tenchinhNumb = shortenNumber(tenchinhNumb);
-	tendemNumb = shortenNumber(tendemNumb);
+	hoNumb = shortenNumber(hoNumb).slice(-1)[0];
+	tenchinhNumb = shortenNumber(tenchinhNumb).slice(-1)[0];
+	tendemNumb = shortenNumber(tendemNumb).slice(-1)[0];
 
 	return shortenNumber(hoNumb + tendemNumb + tenchinhNumb);
 };
@@ -201,9 +205,9 @@ const khattam = (name) => {
 	let tendem = name.tendem;
 	let ho = name.ho;
 
-	let hoNumb = shortenNumber1(demnguyenam(ho));
-	let tenchinhNumb = shortenNumber1(demnguyenam(tenchinh));
-	let tendemNumb = shortenNumber1(demnguyenam(tendem));
+	let hoNumb = shortenNumber1(demnguyenam(ho)).slice(-1)[0];
+	let tenchinhNumb = shortenNumber1(demnguyenam(tenchinh)).slice(-1)[0];
+	let tendemNumb = shortenNumber1(demnguyenam(tendem)).slice(-1)[0];
 
 	return shortenNumber1(hoNumb + tenchinhNumb + tendemNumb);
 };
@@ -214,9 +218,9 @@ const nhancach = (name) => {
 	let tendem = name.tendem;
 	let ho = name.ho;
 
-	let hoNumb = shortenNumber1(demphuam(ho));
-	let tenchinhNumb = shortenNumber1(demphuam(tenchinh));
-	let tendemNumb = shortenNumber1(demphuam(tendem));
+	let hoNumb = shortenNumber1(demphuam(ho)).slice(-1)[0];
+	let tenchinhNumb = shortenNumber1(demphuam(tenchinh)).slice(-1)[0];
+	let tendemNumb = shortenNumber1(demphuam(tendem)).slice(-1)[0];
 
 	return shortenNumber1(hoNumb + tenchinhNumb + tendemNumb);
 };
@@ -271,9 +275,9 @@ const suynghihoply = (name, date) => {
 	for (let i = 0; i < tenchinh.length; i++) {
 		tenchinhNumb += numberChar[tenchinh[i]];
 	}
-	tenchinhNumb = shortenNumber1(tenchinhNumb);
+	tenchinhNumb = shortenNumber1(tenchinhNumb).slice(-1)[0];
 
-	const day = shortenNumber1(date.day);
+	const day = shortenNumber1(date.day).slice(-1)[0];
 
 	return shortenNumber1(tenchinhNumb + day);
 };
@@ -321,13 +325,15 @@ const chukydinhcao = (date, duongdoi) => {
 	let numb1 = shortenNumber1(date.month + date.day);
 	let start1 = date.year;
 	let end1 = date.year + 36 - duongdoi;
-	let numb2 = shortenNumber1(date.year + date.day);
+	let numb2 = shortenNumber1(shortenNumber1(date.year).slice(-1)[0] + date.day);
 	let start2 = end1 + 1;
 	let end2 = end1 + 9;
-	let numb3 = shortenNumber1(numb1 + numb2);
+	let numb3 = shortenNumber1(numb1.slice(-1)[0] + numb2.slice(-1)[0]);
 	let start3 = end2 + 1;
 	let end3 = end2 + 9;
-	let numb4 = shortenNumber1(date.month + date.year);
+	let numb4 = shortenNumber1(
+		date.month + shortenNumber1(date.year).slice(-1)[0]
+	);
 	let start4 = end3 + 1;
 	let end4 = 'hết';
 
@@ -343,20 +349,29 @@ const chukythachthuc = (date) => {
 	//date sau khi da format
 
 	let numb1 = shortenNumber1(
-		Math.abs(shortenNumber1(date.month) - shortenNumber1(date.day))
+		Math.abs(
+			shortenNumber1(date.month).slice(-1)[0] -
+				shortenNumber1(date.day).slice(-1)[0]
+		)
 	);
 	let start1 = '0';
 	let end1 = '30/35 tuổi';
 	let numb2 = shortenNumber1(
-		Math.abs(shortenNumber1(date.year) - shortenNumber1(date.day))
+		Math.abs(
+			shortenNumber1(date.year).slice(-1)[0] -
+				shortenNumber1(date.day).slice(-1)[0]
+		)
 	);
 	let start2 = '30/35 tuổi';
 	let end2 = '55/60 tuổi';
-	let numb3 = shortenNumber1(Math.abs(numb1 - numb2));
+	let numb3 = shortenNumber1(Math.abs(numb1.slice(-1)[0] - numb2.slice(-1)[0]));
 	let start3 = 'Trọn đời';
 	let end3 = 'Trọn đời';
 	let numb4 = shortenNumber1(
-		Math.abs(shortenNumber1(date.month) - shortenNumber1(date.year))
+		Math.abs(
+			shortenNumber1(date.month).slice(-1)[0] -
+				shortenNumber1(date.year).slice(-1)[0]
+		)
 	);
 	let start4 = '55/60';
 	let end4 = 'hết';
@@ -377,25 +392,25 @@ const namcanhan = (date) => {
 		{
 			year: thisYear,
 			number: shortenNumber1(
-				shortenNumber1(date.day) +
-					shortenNumber1(date.month) +
-					shortenNumber1(thisYear)
+				shortenNumber1(date.day).slice(-1)[0] +
+					shortenNumber1(date.month).slice(-1)[0] +
+					shortenNumber1(thisYear).slice(-1)[0]
 			),
 		},
 		{
 			year: thisYear + 1,
 			number: shortenNumber1(
-				shortenNumber1(date.day) +
-					shortenNumber1(date.month) +
-					shortenNumber1(thisYear + 1)
+				shortenNumber1(date.day).slice(-1)[0] +
+					shortenNumber1(date.month).slice(-1)[0] +
+					shortenNumber1(thisYear + 1).slice(-1)[0]
 			),
 		},
 		{
 			year: thisYear + 2,
 			number: shortenNumber1(
-				shortenNumber1(date.day) +
-					shortenNumber1(date.month) +
-					shortenNumber1(thisYear + 2)
+				shortenNumber1(date.day).slice(-1)[0] +
+					shortenNumber1(date.month).slice(-1)[0] +
+					shortenNumber1(thisYear + 2).slice(-1)[0]
 			),
 		},
 	];
@@ -409,14 +424,19 @@ module.exports = (name, date) => {
 	const sosumenh = sumenh(name);
 	const sokhattam = khattam(name);
 	const sonhancach = nhancach(name);
-	const socaunoi = caunoi(soduongdoi, sosumenh, sokhattam, sonhancach);
+	const socaunoi = caunoi(
+		soduongdoi.slice(-1)[0],
+		sosumenh.slice(-1)[0],
+		sokhattam.slice(-1)[0],
+		sonhancach.slice(-1)[0]
+	);
 	const sodammebaihoctiemthuc = dammebaihoctiemthuc(
 		name.ho + name.tenchinh + name.tendem
 	);
 	const sosuynghihoply = suynghihoply(name, date);
 	const socanbang = canbang(name);
-	const sochukycuocsong = chukycuocsong(date, soduongdoi);
-	const sochukydinhcao = chukydinhcao(date, soduongdoi);
+	const sochukycuocsong = chukycuocsong(date, soduongdoi.slice(-1)[0]);
+	const sochukydinhcao = chukydinhcao(date, soduongdoi.slice(-1)[0]);
 	const sochukythachthuc = chukythachthuc(date);
 	const sonamcanhan = namcanhan(date);
 
@@ -436,5 +456,3 @@ module.exports = (name, date) => {
 		namcanhan: sonamcanhan,
 	};
 };
-
-//console.log(main('NGUYỄN THỊ LAN HƯƠNG', '06/07/1984'));

@@ -18,76 +18,94 @@ router.post('/', authentication, async (req, res) => {
 	let result = congthuc(req.body.name, req.body.birthday);
 
 	let content = await Promise.all([
-		Content.findOne({ key: dictKey[0].key, number: result.duongdoi }),
-		Content.findOne({ key: dictKey[1].key, number: result.sumenh }),
+		Content.findOne({
+			key: dictKey[0].key,
+			number: result.duongdoi.slice(-1)[0],
+		}),
+		Content.findOne({
+			key: dictKey[1].key,
+			number: result.sumenh.slice(-1)[0],
+		}),
 		Content.findOne({
 			key: dictKey[3].key,
 			number: result.caunoi.duongdoisumenh,
 		}),
 		Content.findOne({ key: dictKey[4].key, number: result.ngaysinh }),
-		Content.findOne({ key: dictKey[5].key, number: result.khattam }),
-		Content.findOne({ key: dictKey[6].key, number: result.nhancach }),
+		Content.findOne({
+			key: dictKey[5].key,
+			number: result.khattam.slice(-1)[0],
+		}),
+		Content.findOne({
+			key: dictKey[6].key,
+			number: result.nhancach.slice(-1)[0],
+		}),
 		Content.findOne({
 			key: dictKey[7].key,
 			number: result.caunoi.khattamnhancach,
 		}),
-		Content.findOne({ key: dictKey[11].key, number: result.suynghihoply }),
-		Content.findOne({ key: dictKey[12].key, number: result.canbang }),
+		Content.findOne({
+			key: dictKey[11].key,
+			number: result.suynghihoply.slice(-1)[0],
+		}),
+		Content.findOne({
+			key: dictKey[12].key,
+			number: result.canbang.slice(-1)[0],
+		}),
 		Content.findOne({
 			key: dictKey[18].key,
-			number: result.chukycuocsong[0].number,
+			number: result.chukycuocsong[0].number.slice(-1)[0],
 		}),
 		Content.findOne({
 			key: dictKey[19].key,
-			number: result.chukycuocsong[1].number,
+			number: result.chukycuocsong[1].number.slice(-1)[0],
 		}),
 		Content.findOne({
 			key: dictKey[20].key,
-			number: result.chukycuocsong[2].number,
+			number: result.chukycuocsong[2].number.slice(-1)[0],
 		}),
 		Content.findOne({
 			key: dictKey[21].key,
-			number: result.chukydinhcao[0].number,
+			number: result.chukydinhcao[0].number.slice(-1)[0],
 		}),
 		Content.findOne({
 			key: dictKey[22].key,
-			number: result.chukydinhcao[1].number,
+			number: result.chukydinhcao[1].number.slice(-1)[0],
 		}),
 		Content.findOne({
 			key: dictKey[23].key,
-			number: result.chukydinhcao[2].number,
+			number: result.chukydinhcao[2].number.slice(-1)[0],
 		}),
 		Content.findOne({
 			key: dictKey[24].key,
-			number: result.chukydinhcao[3].number,
+			number: result.chukydinhcao[3].number.slice(-1)[0],
 		}),
 		Content.findOne({
 			key: dictKey[25].key,
-			number: result.chukythachthuc[0].number,
+			number: result.chukythachthuc[0].number.slice(-1)[0],
 		}),
 		Content.findOne({
 			key: dictKey[26].key,
-			number: result.chukythachthuc[1].number,
+			number: result.chukythachthuc[1].number.slice(-1)[0],
 		}),
 		Content.findOne({
 			key: dictKey[27].key,
-			number: result.chukythachthuc[2].number,
+			number: result.chukythachthuc[2].number.slice(-1)[0],
 		}),
 		Content.findOne({
 			key: dictKey[28].key,
-			number: result.chukythachthuc[3].number,
+			number: result.chukythachthuc[3].number.slice(-1)[0],
 		}),
 		Content.findOne({
 			key: dictKey[29].key,
-			number: result.namcanhan[0].number,
+			number: result.namcanhan[0].number.slice(-1)[0],
 		}),
 		Content.findOne({
 			key: dictKey[30].key,
-			number: result.namcanhan[1].number,
+			number: result.namcanhan[1].number.slice(-1)[0],
 		}),
 		Content.findOne({
 			key: dictKey[31].key,
-			number: result.namcanhan[2].number,
+			number: result.namcanhan[2].number.slice(-1)[0],
 		}),
 	]);
 
@@ -866,7 +884,9 @@ router.get('/', authentication, async (req, res) => {
 					data = await Report.find({ name: { $regex: keyword } }, null, {
 						skip,
 						limit,
-					}).sort({ date: -1 });
+					})
+						.select('-content')
+						.sort({ date: -1 });
 					countDocs = await Report.countDocuments({
 						name: { $regex: keyword },
 					});
@@ -881,18 +901,24 @@ router.get('/', authentication, async (req, res) => {
 						},
 						null,
 						{ skip, limit }
-					).sort({ date: -1 });
+					)
+						.select('-content')
+						.sort({ date: -1 });
 				} else {
 					data = await Report.find({ [field]: keyword }, null, {
 						skip,
 						limit,
-					}).sort({ date: -1 });
+					})
+						.select('-content')
+						.sort({ date: -1 });
 					countDocs = await Report.countDocuments({ [field]: keyword });
 				}
 			} else {
-				data = await Report.find(null, null, { skip, limit }).sort({
-					date: -1,
-				});
+				data = await Report.find(null, null, { skip, limit })
+					.select('-content')
+					.sort({
+						date: -1,
+					});
 				countDocs = await Report.countDocuments();
 			}
 		} else {
@@ -902,7 +928,9 @@ router.get('/', authentication, async (req, res) => {
 						{ userId: req.user.id, name: { $regex: keyword } },
 						null,
 						{ skip, limit }
-					).sort({ date: -1 });
+					)
+						.select('-content')
+						.sort({ date: -1 });
 					countDocs = await Report.countDocuments({
 						userId: req.user.id,
 						name: { $regex: keyword },
@@ -919,13 +947,17 @@ router.get('/', authentication, async (req, res) => {
 						},
 						null,
 						{ skip, limit }
-					).sort({ date: -1 });
+					)
+						.select('-content')
+						.sort({ date: -1 });
 				} else {
 					data = await Report.find(
 						{ userId: req.user.id, [field]: keyword },
 						null,
 						{ skip, limit }
-					).sort({ date: -1 });
+					)
+						.select('-content')
+						.sort({ date: -1 });
 					countDocs = await Report.countDocuments({
 						userId: req.user.id,
 						[field]: keyword,
@@ -935,7 +967,9 @@ router.get('/', authentication, async (req, res) => {
 				data = await Report.find({ userId: req.user.id }, null, {
 					skip,
 					limit,
-				}).sort({ date: -1 });
+				})
+					.select('-content')
+					.sort({ date: -1 });
 				countDocs = await Report.countDocuments({ userId: req.user.id });
 			}
 		}
