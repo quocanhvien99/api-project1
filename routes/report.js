@@ -56,11 +56,11 @@ router.post('/', authentication, async (req, res) => {
 			number: result.chukycuocsong[0].number.slice(-1)[0],
 		}),
 		Content.findOne({
-			key: dictKey[19].key,
+			key: dictKey[18].key,
 			number: result.chukycuocsong[1].number.slice(-1)[0],
 		}),
 		Content.findOne({
-			key: dictKey[20].key,
+			key: dictKey[18].key,
 			number: result.chukycuocsong[2].number.slice(-1)[0],
 		}),
 		Content.findOne({
@@ -68,15 +68,15 @@ router.post('/', authentication, async (req, res) => {
 			number: result.chukydinhcao[0].number.slice(-1)[0],
 		}),
 		Content.findOne({
-			key: dictKey[22].key,
+			key: dictKey[21].key,
 			number: result.chukydinhcao[1].number.slice(-1)[0],
 		}),
 		Content.findOne({
-			key: dictKey[23].key,
+			key: dictKey[21].key,
 			number: result.chukydinhcao[2].number.slice(-1)[0],
 		}),
 		Content.findOne({
-			key: dictKey[24].key,
+			key: dictKey[21].key,
 			number: result.chukydinhcao[3].number.slice(-1)[0],
 		}),
 		Content.findOne({
@@ -84,15 +84,15 @@ router.post('/', authentication, async (req, res) => {
 			number: result.chukythachthuc[0].number.slice(-1)[0],
 		}),
 		Content.findOne({
-			key: dictKey[26].key,
+			key: dictKey[25].key,
 			number: result.chukythachthuc[1].number.slice(-1)[0],
 		}),
 		Content.findOne({
-			key: dictKey[27].key,
+			key: dictKey[25].key,
 			number: result.chukythachthuc[2].number.slice(-1)[0],
 		}),
 		Content.findOne({
-			key: dictKey[28].key,
+			key: dictKey[25].key,
 			number: result.chukythachthuc[3].number.slice(-1)[0],
 		}),
 		Content.findOne({
@@ -100,11 +100,11 @@ router.post('/', authentication, async (req, res) => {
 			number: result.namcanhan[0].number.slice(-1)[0],
 		}),
 		Content.findOne({
-			key: dictKey[30].key,
+			key: dictKey[29].key,
 			number: result.namcanhan[1].number.slice(-1)[0],
 		}),
 		Content.findOne({
-			key: dictKey[31].key,
+			key: dictKey[29].key,
 			number: result.namcanhan[2].number.slice(-1)[0],
 		}),
 	]);
