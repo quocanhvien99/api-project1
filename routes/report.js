@@ -157,7 +157,7 @@ router.post('/', authentication, async (req, res) => {
                 font-family: 'UTM';
                 src: url('file:///${projectRoot}/public/font/UTMSwissCondensed.ttf'); 
             }
-            html{zoom: ${process.env.SERVER_OS == 'linux' ? 0.7 : 1.0};}
+            html{zoom: ${process.env.SERVER_OS == 'linux' ? 0.8 : 1.0};}
             body {
                 margin: 0;
                 font-family: 'UTM';
