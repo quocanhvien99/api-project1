@@ -891,7 +891,9 @@ giới. Số Khát tâm thể hiện bản sắc tâm hồn của bạn.
                     <img style="width:100%;height:auto;" src="file:///${projectRoot}/public/img/cover.png">
                     <div style="zoom: ${
 											process.env.SERVER_OS == 'linux' ? 0.7 : 1.0
-										};position: absolute; bottom: 1.3in; width: 100%;text-align: center;"><span style="font-family:'Roboto';font-size:24pt;color:#fff;text-transform: uppercase;">${name} ${birthday}</span></div>
+										};position: absolute; bottom: ${
+				process.env.SERVER_OS == 'linux' ? '1.4in' : '1.3in'
+			}; width: 100%;text-align: center;"><span style="font-family:'Roboto';font-size:24pt;color:#fff;text-transform: uppercase;">${name} ${birthday}</span></div>
                 </div>
             </body>
         </html>
