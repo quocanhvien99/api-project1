@@ -205,11 +205,11 @@ const khattam = (name) => {
 	let tendem = name.tendem;
 	let ho = name.ho;
 
-	let hoNumb = shortenNumber1(demnguyenam(ho)).slice(-1)[0];
-	let tenchinhNumb = shortenNumber1(demnguyenam(tenchinh)).slice(-1)[0];
-	let tendemNumb = shortenNumber1(demnguyenam(tendem)).slice(-1)[0];
+	let hoNumb = shortenNumber(demnguyenam(ho)).slice(-1)[0];
+	let tenchinhNumb = shortenNumber(demnguyenam(tenchinh)).slice(-1)[0];
+	let tendemNumb = shortenNumber(demnguyenam(tendem)).slice(-1)[0];
 
-	return shortenNumber1(hoNumb + tenchinhNumb + tendemNumb);
+	return shortenNumber(hoNumb + tenchinhNumb + tendemNumb);
 };
 
 const nhancach = (name) => {
@@ -303,17 +303,17 @@ const chukycuocsong = (date, duongdoi) => {
 
 	return [
 		{
-			number: shortenNumber1(date.month),
+			number: shortenNumber(date.month),
 			start: start1,
 			end: end1,
 		},
 		{
-			number: shortenNumber1(date.day),
+			number: shortenNumber(date.day),
 			start: start2,
 			end: end2,
 		},
 		{
-			number: shortenNumber1(date.year),
+			number: shortenNumber(date.year),
 			start: start3,
 			end: end3,
 		},
@@ -322,17 +322,23 @@ const chukycuocsong = (date, duongdoi) => {
 
 const chukydinhcao = (date, duongdoi) => {
 	//date sau khi da format
-	let numb1 = shortenNumber1(date.month + date.day);
+	let numb1 = shortenNumber(
+		shortenNumber(date.month).slice(-1)[0] +
+			shortenNumber(date.day).slice(-1)[0]
+	);
 	let start1 = date.year;
 	let end1 = date.year + 36 - duongdoi;
-	let numb2 = shortenNumber1(shortenNumber1(date.year).slice(-1)[0] + date.day);
+	let numb2 = shortenNumber(
+		shortenNumber(date.year).slice(-1)[0] + shortenNumber(date.day).slice(-1)[0]
+	);
 	let start2 = end1 + 1;
 	let end2 = end1 + 9;
-	let numb3 = shortenNumber1(numb1.slice(-1)[0] + numb2.slice(-1)[0]);
+	let numb3 = shortenNumber(numb1.slice(-1)[0] + numb2.slice(-1)[0]);
 	let start3 = end2 + 1;
 	let end3 = end2 + 9;
-	let numb4 = shortenNumber1(
-		date.month + shortenNumber1(date.year).slice(-1)[0]
+	let numb4 = shortenNumber(
+		shortenNumber(date.month).slice(-1)[0] +
+			shortenNumber(date.year).slice(-1)[0]
 	);
 	let start4 = end3 + 1;
 	let end4 = 'hết';

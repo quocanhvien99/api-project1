@@ -109,6 +109,39 @@ router.post('/', authentication, async (req, res) => {
 		}),
 	]);
 
+	// let checkMainNumber = async (x, key) => {
+	// 	const beforeLast = x.slice(-2)[0];
+	// 	if (beforeLast == 11 || beforeLast == 22 || beforeLast == 33) {
+	// 		let data = await Content.findOne({
+	// 			key: key,
+	// 			number: beforeLast,
+	// 		});
+	// 		return data.content;
+	// 	}
+	// 	return false;
+	// };
+
+	// let checkHopLy = await checkMainNumber(result.suynghihoply, 11);
+
+	let extendContent = async (x) => {
+		const beforeLast = result[x].slice(-2)[0];
+		if (
+			beforeLast == 13 ||
+			beforeLast == 14 ||
+			beforeLast == 16 ||
+			beforeLast == 19
+		) {
+			let data = await Content.findOne({
+				key: dictKey[0].key,
+				number: beforeLast,
+			});
+			return data.content;
+		}
+		return '';
+	};
+
+	let extendduongdoi = await extendContent('duongdoi');
+
 	let damme = [];
 	for (let i = 0; i < result.dammebaihoctiemthuc.damme.length; i++) {
 		damme.push(
@@ -171,14 +204,11 @@ router.post('/', authentication, async (req, res) => {
     <html>
     <head>
         <style>
-            @font-face {
-                font-family: 'UTM';
-                src: url('file:///${projectRoot}/public/font/UTMSwissCondensed.ttf'); 
-            }
+            @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;1,400&display=swap');
             html{zoom: ${process.env.SERVER_OS == 'linux' ? 0.75 : 1.0};}
             body {
                 margin: 0;
-                font-family: 'UTM';
+                font-family: 'Roboto';
             }
             body *:not(h2, .number) {
                 font-size: 12pt
@@ -200,7 +230,7 @@ router.post('/', authentication, async (req, res) => {
             #mucluc > p {
                 margin: 10px 0;
                 font-size: larger;
-                font-weight: bold;
+                font-weight: normal;
                 line-height: 1;
             }
             p {
@@ -274,18 +304,18 @@ router.post('/', authentication, async (req, res) => {
                     <h1 style="text-transform: uppercase; text-align: center;">Mục lục báo cáo</h1>
                     <p>• Thông tin khách hàng</p>
                     <p>• Quy trình báo cáo Thần số học</p>
-                    <p>I. LA BÀN ĐỊNH VỊ CUỘC ĐỜI</p>
+                    <p style="margin: 0.4in 0; font-weight: bold;">I. LA BÀN ĐỊNH VỊ CUỘC ĐỜI</p>
                     <p>• Số đường đời</p>
                     <p>• Số sứ mệnh</p>
                     <p>• Số cầu nối</p>
-                    <p>II. HÀNH TRANG VÀO ĐỜI</p>
+                    <p style="margin: 0.4in 0; font-weight: bold;">II. HÀNH TRANG VÀO ĐỜI</p>
                     <p>• Số ngày sinh</p>
                     <p>• Số khát tâm</p>
                     <p>• Số nhân cách</p>
                     <p>• Đam mê tiềm ẩn</p>
                     <p>• Số suy nghĩ hợp lý</p>
                     <p>• Số cân bằng</p>
-                    <p>III. CHU KỲ CUỘC SỐNG – ĐỈNH CAO & THÁCH THỨC</p>
+                    <p style="margin: 0.4in 0; font-weight: bold;">III. CHU KỲ CUỘC SỐNG – ĐỈNH CAO & THÁCH THỨC</p>
                     <p>• 3 Chu kỳ sống</p>
                     <p>• 4 đỉnh cao</p>
                     <p>• 4 thách thức</p>
@@ -354,10 +384,12 @@ router.post('/', authentication, async (req, res) => {
                     gặp trong cuộc đời này. Số Đường đời của bạn là thông tin quan trọng nhất có sẵn trong bạn.
                     </p>                    
                     <div class="number">
-                        <img src="file:///${projectRoot}/public/img/vi_53.png">
-                        <div class="value">${content[0].number}</div> 
+                        <img src="file:///${projectRoot}/public/img/duongdoi/${
+				content[0].number
+			}.png">
                     </div>
                     ${content[0].content}
+                    ${extendduongdoi}
                 </div>
                 <div>
                     <h2 style="text-align: center;">SỐ SỨ MỆNH</h2>
@@ -387,8 +419,9 @@ sống này. Nhân cách của bạn sẽ xuất hiện dần dần qua thời g
 có trong bản thể của bạn.
                     </p>
                     <div class="number">
-                        <img src="file:///${projectRoot}/public/img/vi_57.png">
-                        <div class="value">${content[1].number}</div> 
+                        <img src="file:///${projectRoot}/public/img/sumenh/${
+				content[1].number
+			}.png">
                     </div>
                     ${content[1].content}
                 </div>                
@@ -462,8 +495,9 @@ người có xu hướng nhìn thấy bạn. Nó cũng cho thấy những đặc
 giới. Số Khát tâm thể hiện bản sắc tâm hồn của bạn.
                 </p>
                 <div class="number">
-                        <img src="file:///${projectRoot}/public/img/vi_65.png">
-                        <div class="value">${content[4].number}</div> 
+                        <img src="file:///${projectRoot}/public/img/khattam/${
+				content[4].number
+			}.png">
                 </div>
                 ${content[4].content}
                 </div>
@@ -489,8 +523,9 @@ giới. Số Khát tâm thể hiện bản sắc tâm hồn của bạn.
                 cũng gặp khó khăn khi mô tả cách họ nhìn thấy chúng ta.
                 </p>
                 <div class="number">
-                        <img src="file:///${projectRoot}/public/img/vi_67.png">
-                        <div class="value">${content[5].number}</div> 
+                        <img src="file:///${projectRoot}/public/img/nhancach/${
+				content[5].number
+			}.png">
                 </div>
                 ${content[5].content}
                 </div>
@@ -566,8 +601,9 @@ giới. Số Khát tâm thể hiện bản sắc tâm hồn của bạn.
                 giao tiếp dựa trên phong cách suy nghĩ của những người đó.
                 </p>
                 <div class="number">
-                        <img src="file:///${projectRoot}/public/img/vi_69.png">
-                        <div class="value">${content[7].number}</div> 
+                        <img src="file:///${projectRoot}/public/img/hoply/${
+				content[7].number
+			}.png">
                 </div>
                 ${content[7].content}
                 </div>
@@ -588,8 +624,9 @@ giới. Số Khát tâm thể hiện bản sắc tâm hồn của bạn.
                 huống khi nó đã xuất hiện, số cân bằng sẽ cung cấp cho bạn.                
                 </p>
                 <div class="number">
-                        <img src="file:///${projectRoot}/public/img/vi_71.png">
-                        <div class="value">${content[8].number}</div> 
+                        <img src="file:///${projectRoot}/public/img/canbang/${
+				content[8].number
+			}.png">
                 </div>
                 ${content[8].content}
                 </div> 
@@ -619,7 +656,7 @@ giới. Số Khát tâm thể hiện bản sắc tâm hồn của bạn.
                 thân và sức ảnh hưởng lớn nhất.
                 </p>                
                 <div class="number" style="margin-top: 100px">
-                        <img src="file:///${projectRoot}/public/img/Capture2.PNG">
+                        <img src="file:///${projectRoot}/public/img/chuky/img.PNG">
                         <div class="value" style="left: -150px;">${
 													content[9].number
 												}</div>
@@ -670,7 +707,7 @@ giới. Số Khát tâm thể hiện bản sắc tâm hồn của bạn.
                 sự trưởng thành.                
                 </p>
                 <div class="number">
-                        <img src="file:///${projectRoot}/public/img/Capture3.PNG">
+                        <img src="file:///${projectRoot}/public/img/dinhcao/img.PNG">
                         <div class="value" style="left: -100px; top: 240px;">${
 													content[12].number
 												}</div>
@@ -741,11 +778,11 @@ giới. Số Khát tâm thể hiện bản sắc tâm hồn của bạn.
                 Tất cả Thách thức của bạn là có sẵn trong ngày bạn sinh ra.
                 </p>
                 <div class="number" style="margin-top: 50px;">
-                        <img src="file:///${projectRoot}/public/img/Capture4.PNG">
-                        <div class="value" style="left: -80px; top: 8px;">${
+                        <img src="file:///${projectRoot}/public/img/thachthuc/img.PNG">
+                        <div class="value" style="left: -80px; top: 4px;">${
 													content[16].number
 												}</div>
-                        <div class="value" style="left: 80px; top: 8px;">${
+                        <div class="value" style="left: 80px; top: 4px;">${
 													content[17].number
 												}</div>
                         <div class="value" style="top: 30px;">${
@@ -844,12 +881,17 @@ giới. Số Khát tâm thể hiện bản sắc tâm hồn của bạn.
 		.create(
 			`
         <html >
+            <head>
+                <style>
+                    @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;1,400&display=swap');
+                </style>
+            </head>
             <body style="margin: 0;">
                 <div id="bia" style="position: relative; padding: 0;">
                     <img style="width:100%;height:auto;" src="file:///${projectRoot}/public/img/cover.png">
                     <div style="zoom: ${
 											process.env.SERVER_OS == 'linux' ? 0.7 : 1.0
-										};position: absolute; bottom: 1.3in; width: 100%;text-align: center;"><span style="font-size:24pt;color:#fff;text-transform: uppercase;">${name} ${birthday}</span></div>
+										};position: absolute; bottom: 1.3in; width: 100%;text-align: center;"><span style="font-family:'Roboto';font-size:24pt;color:#fff;text-transform: uppercase;">${name} ${birthday}</span></div>
                 </div>
             </body>
         </html>
